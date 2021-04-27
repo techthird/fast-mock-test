@@ -43,7 +43,8 @@ mvn fast-test:test
 ```   
 
 直接运行mvn fast-test:test即可下载模板文件&生成测试类 
-![Uploading image.png…]()
-![Uploading image.png…]()
+![image](https://user-images.githubusercontent.com/20860404/116179453-f6cccc00-a749-11eb-8a7f-3a9bf5e4236b.png)
+![image](https://user-images.githubusercontent.com/20860404/116179428-ea487380-a749-11eb-9c41-df22e7a9a5e5.png)
+
 
 

@@ -36,7 +36,7 @@
 </plugins>
 ```
 
-### 4、生成测试代码 
+### 3、生成测试代码 
 在引入插件的项目模块下运行maven插件的 fast-test:test 命令    
 ```
 mvn fast-test:test

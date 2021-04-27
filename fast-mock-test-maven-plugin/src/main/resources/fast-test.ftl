@@ -1,5 +1,5 @@
 /*
-* fast-test
+* fast-mock-test
 */
 package ${javaClassDTO.packageName};
 
@@ -48,7 +48,7 @@ private ${javaClassDTO.modelNameUpperCamel} ${javaClassDTO.modelNameLowerCamel};
         <#--获取内部参数-->
             <#if parameter.isInterface>
             <#--参数是接口-->
-                ${parameter.type} ${parameter.name} =
+        ${parameter.type} ${parameter.name} =
                 <#if parameter.value??>
                     ${parameter.value}
                 <#else >
@@ -60,18 +60,18 @@ private ${javaClassDTO.modelNameUpperCamel} ${javaClassDTO.modelNameLowerCamel};
                     </#if>
                 </#if>
             <#else >
-                ${parameter.type} ${parameter.name} = <#if parameter.value??>${parameter.value}<#else >new ${parameter.type}()</#if>;
+        ${parameter.type} ${parameter.name} = <#if parameter.value??>${parameter.value}<#else >new ${parameter.type}()</#if>;
             </#if>
             <#list parameter.javaParameterDTOList as cParameter>
             <#--设置内部值-->
-                ${parameter.name}.set${cParameter.upName}(<#if cParameter.value??>${cParameter.value}<#else >new ${cParameter.type}()</#if>);
+        ${parameter.name}.set${cParameter.upName}(<#if cParameter.value??>${cParameter.value}<#else >new ${cParameter.type}()</#if>);
             </#list>
         <#else >
 
         <#--获取内部参数-->
             <#if parameter.isInterface>
             <#--参数是接口-->
-                ${parameter.type} ${parameter.name} =
+        ${parameter.type} ${parameter.name} =
                 <#if parameter.value??>
                     ${parameter.value}
                 <#else >
@@ -83,7 +83,7 @@ private ${javaClassDTO.modelNameUpperCamel} ${javaClassDTO.modelNameLowerCamel};
                     </#if>
                 </#if>
             <#else >
-                ${parameter.type} ${parameter.name} = <#if parameter.value??>${parameter.value}<#else >new ${parameter.type}()</#if>;
+        ${parameter.type} ${parameter.name} = <#if parameter.value??>${parameter.value}<#else >new ${parameter.type}()</#if>;
             </#if>
         </#if>
     </#list>
@@ -119,7 +119,7 @@ private ${javaClassDTO.modelNameUpperCamel} ${javaClassDTO.modelNameLowerCamel};
 
         /** 3、调用方法 */
         // ${method.comment!""}
-    ${method.returnType} obj = ${javaClassDTO.modelNameLowerCamel}.${method.methodName}(<#list method.javaParameterDTOList as parameter><#if parameter_index==0>${parameter.name}<#else>,${parameter.name}</#if></#list>);
+        ${method.returnType} obj = ${javaClassDTO.modelNameLowerCamel}.${method.methodName}(<#list method.javaParameterDTOList as parameter><#if parameter_index==0>${parameter.name}<#else>,${parameter.name}</#if></#list>);
 
         /** 4、断言 */
         /*
@@ -148,20 +148,20 @@ private ${javaClassDTO.modelNameUpperCamel} ${javaClassDTO.modelNameLowerCamel};
      */
     private ${mockMethInfo.genericValue} ${mockMethInfo.returnMethodName}() {
                 <#if mockMethInfo.genericValue?contains("List")>
-                    ${mockMethInfo.genericValue} objList = new ArrayList<>();
+        ${mockMethInfo.genericValue} objList = new ArrayList<>();
                     <#list mockMethInfo.javaGenericModelList as javaGenericModel>
                         <#assign objName1 ="${javaGenericModel.genericName?uncap_first}">
-                        ${javaGenericModel.genericName} ${objName1} = new ${javaGenericModel.genericName}();
+        ${javaGenericModel.genericName} ${objName1} = new ${javaGenericModel.genericName}();
                         <#list javaGenericModel.javaGenericParameterDTOList as cParameter>
                         <#--设置内部值-->
-                            ${objName1}.set${cParameter.upName}(<#if cParameter.value??>${cParameter.value}<#else >new ${cParameter.type}()</#if>);
+        ${objName1}.set${cParameter.upName}(<#if cParameter.value??>${cParameter.value}<#else >new ${cParameter.type}()</#if>);
                         </#list>
                     </#list>
 
         objList.add(${objName1});
         return objList;
                 <#elseif mockMethInfo.genericValue?contains("Map")>
-                    ${mockMethInfo.genericValue} mapObj = new HashMap<>();
+        ${mockMethInfo.genericValue} mapObj = new HashMap<>();
                     <#if mockMethInfo.javaGenericModelList[0].isBaseDataType && mockMethInfo.javaGenericModelList[1].isBaseDataType>
         mapObj.put(${mockMethInfo.javaGenericModelList[0].defaultValue},${mockMethInfo.javaGenericModelList[1].defaultValue});
                     <#else>
@@ -171,10 +171,10 @@ private ${javaClassDTO.modelNameUpperCamel} ${javaClassDTO.modelNameLowerCamel};
                                 <#assign thisDefaultValue = "${(javaGenericModel.defaultValue)!''}">
                             <#else>
                                 <#assign objName2 ="${javaGenericModel.genericName?uncap_first}">
-                                ${javaGenericModel.genericName} ${objName2} = new ${javaGenericModel.genericName}();
+        ${javaGenericModel.genericName} ${objName2} = new ${javaGenericModel.genericName}();
                                 <#list javaGenericModel.javaGenericParameterDTOList as cParameter>
                                 <#--设置内部值-->
-                                    ${objName2}.set${cParameter.upName}(<#if cParameter.value??>${cParameter.value}<#else >new ${cParameter.type}()</#if>);
+        ${objName2}.set${cParameter.upName}(<#if cParameter.value??>${cParameter.value}<#else >new ${cParameter.type}()</#if>);
                                 </#list>
                             </#if>
                         </#list>
@@ -186,10 +186,10 @@ private ${javaClassDTO.modelNameUpperCamel} ${javaClassDTO.modelNameLowerCamel};
         return ${mockMethInfo.defaultValue};
                 <#elseif mockMethInfo.javaReturnParameterDTOList?? && (mockMethInfo.javaReturnParameterDTOList?size > 0)>
                     <#assign objName3 ="${mockMethInfo.genericValue?uncap_first}">
-                    ${mockMethInfo.genericValue} ${objName3} = new ${mockMethInfo.genericValue}();
+        ${mockMethInfo.genericValue} ${objName3} = new ${mockMethInfo.genericValue}();
                     <#list mockMethInfo.javaReturnParameterDTOList as cParameter>
                     <#--设置内部值-->
-                        ${objName3}.set${cParameter.upName}(<#if cParameter.value??>${cParameter.value}<#else >new ${cParameter.type}()</#if>);
+        ${objName3}.set${cParameter.upName}(<#if cParameter.value??>${cParameter.value}<#else >new ${cParameter.type}()</#if>);
                     </#list>
 
         return ${objName3};

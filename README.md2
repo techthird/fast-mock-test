@@ -100,7 +100,7 @@ fast-test:test命令，即可将配置文件下载到对应的路径。
 
 ##### 1.0.0
 - ```<jsonConfigPath>```: json配置文件路径,defaultValue = "/src/main/resources/test/template/"  
-- ```<jsonConfigFileName>```: json配置文件名称,defaultValue = "fast-mock-test.json"  
+- ```<jsonConfigFileName>```: json配置文件名称,defaultValue = "fast-test.json"
 - ```<isDownloadTemplateFile>```:  是否将Template配置文件下载到本地，默认true 
 - ```<isDownloadJsonFile>```:  是否将json配置文件下载到本地，默认true  
 

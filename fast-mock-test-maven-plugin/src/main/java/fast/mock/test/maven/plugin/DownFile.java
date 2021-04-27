@@ -26,7 +26,7 @@ public class DownFile {
 
     private static Log log = new SystemStreamLog();
 
-    private static String tmpFtlFileName = "primo-generator-mock-test-" + UUIDUtils.getID() + ".ftl";
+    private static String tmpFtlFileName = "fast-test-" + UUIDUtils.getID() + ".ftl";
     /**
      * 下载模板文件
      */
@@ -69,14 +69,14 @@ public class DownFile {
             String jsonStr = "";
             if (!CommonConstant.CONFIG_ENTITY.getIsDownloadJsonFile()) {
                 //创建目录
-                ClassPathResource classPathResource = new ClassPathResource("fast-mock-test.json");
+                ClassPathResource classPathResource = new ClassPathResource("fast-test.json");
                 //得到输入流
                 InputStream inputStream = classPathResource.getInputStream();
                 jsonStr = FileUtils.readInputStreamToString(inputStream);
             }else {
                 String configPath = CommonConstant.CONFIG_ENTITY.getJsonConfigPath();
                 String path = CommonConstant.CONFIG_ENTITY.getBasedir().getPath() + configPath;
-                FileUtils.downLoadFile(CommonConstant.CONFIG_ENTITY.getJsonConfigFileName(), path, "fast-mock-test.json");
+                FileUtils.downLoadFile(CommonConstant.CONFIG_ENTITY.getJsonConfigFileName(), path, "fast-test.json");
 
                 //下载说明
 //                FileUtils.downLoadFile("fast-mock-test-description.md", path, "fast-mock-test-description.md");

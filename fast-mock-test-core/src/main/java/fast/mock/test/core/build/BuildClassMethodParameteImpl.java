@@ -334,7 +334,7 @@ public class BuildClassMethodParameteImpl {
                 //判断是否是一个类下的
                 String scopeValue = jsonConfigList.getScopeValue();
                 if(StringUtils.isEmpty(scopeValue)){
-                    log.warn("【fast-mock-test.json配置的作用域为METHOD，未配置scopeValue,jsonConfigList="+JSON.toJSONString(jsonConfigList));
+                    log.warn("【fast-test.json配置的作用域为METHOD，未配置scopeValue,jsonConfigList="+JSON.toJSONString(jsonConfigList));
                     continue;
                 }
                 if(!scopeValue.equals(parameterDTO.getMethodfullyType())){
@@ -369,7 +369,7 @@ public class BuildClassMethodParameteImpl {
                 //判断是否是一个类下的
                 String scopeValue = jsonConfigList.getScopeValue();
                 if(StringUtils.isEmpty(scopeValue)){
-                    log.warn("【fast-mock-test.json配置的作用域为CLASS，未配置scopeValue,jsonConfigList="+JSON.toJSONString(jsonConfigList));
+                    log.warn("【fast-test.json配置的作用域为CLASS，未配置scopeValue,jsonConfigList="+JSON.toJSONString(jsonConfigList));
                     continue;
                 }
                 if(!scopeValue.equals(parameterDTO.getClassfullyType())){
@@ -405,7 +405,7 @@ public class BuildClassMethodParameteImpl {
                 //判断是否是一个包下的
                 String scopeValue = jsonConfigList.getScopeValue();
                 if(StringUtils.isEmpty(scopeValue)){
-                    log.warn("【fast-mock-test.json配置的作用域为PACKAGE，未配置scopeValue,jsonConfigList="+JSON.toJSONString(jsonConfigList));
+                    log.warn("【fast-test.json配置的作用域为PACKAGE，未配置scopeValue,jsonConfigList="+JSON.toJSONString(jsonConfigList));
                     continue;
                 }
                 if(!scopeValue.equals(parameterDTO.getPackageName())){

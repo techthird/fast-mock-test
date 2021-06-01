@@ -1,19 +1,19 @@
 package fast.mock.test.demo.service.impl;
 
-import fast.mock.test.demo.entity.User;
-import fast.mock.test.demo.mapper.UserMapper;
-import fast.mock.test.demo.query.UserQueryBo;
-import fast.mock.test.demo.service.IUserService;
-import fast.mock.test.demo.entity.User;
-import fast.mock.test.demo.mapper.UserMapper;
-import fast.mock.test.demo.service.IUserService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import org.springframework.stereotype.Service;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import fast.mock.test.demo.query.UserQueryBo;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import fast.mock.test.demo.entity.User;
+import fast.mock.test.demo.mapper.UserMapper;
+import fast.mock.test.demo.query.UserQueryBo;
+import fast.mock.test.demo.service.ITableShardingService;
+import fast.mock.test.demo.service.IUserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -28,6 +28,8 @@ import java.util.Map;
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IUserService {
 
+    @Autowired
+    private ITableShardingService iTableShardingService;
     /**
      * 按照条件分页查询
      * @param query
@@ -57,6 +59,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         QueryWrapper<User> queryWrapper = query.buildQuery();
         return null;
     }
+    public List<Map<String,User>> getListMap(int a) {
+        return null;
+    }
     public Map<String,Object> getUserMap2(UserQueryBo query, boolean bool) {
         QueryWrapper<User> queryWrapper = query.buildQuery();
         return null;
@@ -83,10 +88,23 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
      */
     @Override
     public List<User> listUser(UserQueryBo query) {
+        System.out.println("fffff");
         if(query==null){
             return new ArrayList<>(2);
         }
-        return this.list(query.buildQuery());
+        User user = new User();
+        user.setId(10000);
+        user.setEmail("test@qq.com");
+        user.setName("fdafd打发第三方");
+
+        try {
+            iTableShardingService.getOne2();
+            return this.list(query.buildQuery());
+        } catch (Exception e) {
+        	e.printStackTrace();
+        }
+
+        return Arrays.asList(user);
     }
 
 }

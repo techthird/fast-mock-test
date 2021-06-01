@@ -8,9 +8,9 @@ import fast.mock.test.demo.entity.TableSharding;
 import fast.mock.test.demo.entity.User;
 import fast.mock.test.demo.query.TableShardingQueryBo;
 import fast.mock.test.demo.query.UserQueryBo;
+import fast.mock.test.demo.service.MyService;
 import fast.mock.test.demo.service.impl.TableShardingServiceImpl;
 import fast.mock.test.demo.service.impl.UserServiceImpl;
-import fast.mock.test.demo.service.impl.UserTemplateServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,13 +25,11 @@ import java.util.Map;
  * @author chenhx
  * @since 2020-12-29
  */
-@Service
-public class MyServiceImpl{
+@Service("myService")
+public class MyServiceImpl implements MyService{
 
     @Autowired
     private UserServiceImpl userService;
-    @Autowired
-    private UserTemplateServiceImpl userTemplateService;
     @Autowired
     private TableShardingServiceImpl tableShardingService;
 
@@ -39,6 +37,7 @@ public class MyServiceImpl{
      * 按照条件分页查询
      * @param query
      */
+    @Override
     public IPage<UserQueryBo> pageTestParent(TableShardingQueryBo query, int pageNo, int pageSize){
         if(query==null){
             return new Page<>();
@@ -47,13 +46,28 @@ public class MyServiceImpl{
         page.setCurrent(pageNo);
         page.setSize(pageSize);
         QueryWrapper<TableSharding> queryWrapper = query.buildQuery();
-        IPage<User> page1 = userService.page(null, 0, 0);
-        List<User> list = userService.listUser(new UserQueryBo());
-        userTemplateService.update222(null, null);
-        tableShardingService.testInt(null);
-        tableShardingService.testInt2(false);
-        tableShardingService.testString();
-        tableShardingService.testBoolean(0D);
+        UserQueryBo userQueryBo1 = new UserQueryBo();
+        userQueryBo1.setId(10000);
+        userQueryBo1.setEmail("test222@qq.com");
+        userQueryBo1.setName("fdaf222222222222d打发第三方");
+
+        tableShardingService.getDataRo3(22);
+        tableShardingService.getDataRo2(null);
+        tableShardingService.getMapDataRO(null);
+        tableShardingService.getDataRo1(0);
+        tableShardingService.getListMap1(1);
+        tableShardingService.getListMap2(2);
+        tableShardingService.getListMap2222(2);
+        tableShardingService.getListMap2333(2);
+        tableShardingService.getListMap2322233(2);
+        tableShardingService.testString(2);
+        tableShardingService.getPage1(2);
+        tableShardingService.getPage2(2);
+        tableShardingService.getDataRO22(2);
+
+
+
+
         UserQueryBo userQueryBo = new UserQueryBo();
         userQueryBo.setEmail("fjdljf@qq.com");
         userQueryBo.setId(12000);
@@ -63,28 +77,14 @@ public class MyServiceImpl{
         return objectPage;
     }
 
-    public Integer ones(int pageNo,Integer pageSize){
-        IPage<TableSharding> page = new Page<>();
-        page.setCurrent(pageNo);
-        page.setSize(pageSize);
-        User user = userService.getOne(null);
-        userTemplateService.update222(null, null);
-        tableShardingService.testInt(null);
-        tableShardingService.testInt2(false);
-        tableShardingService.testString();
-        return 12;
-    }
 
     public Map<String,Object> maps(long pageNo, Integer pageSize){
         Map<String, User> user = userService.getUserMap(null);
-        Map<String, Object> user2 = userService.getUserMap2(null , false);
-        List<User> list = userService.listUser(new UserQueryBo());
-        userTemplateService.update222(null, null);
-        tableShardingService.testInt(null);
-        tableShardingService.testInt2(false);
-        tableShardingService.testString();
-        return user2;
+        List<Map<String, User>> listMap = userService.getListMap(1);
+        return null;
     }
+
+
 
 
 }

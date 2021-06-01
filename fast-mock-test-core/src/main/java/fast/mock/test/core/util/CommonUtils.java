@@ -22,6 +22,20 @@ public class CommonUtils {
     }
 
     /**
+     * 判断一个类是JAVA类型还是用户定义类型
+     * @param clz 完整的包名.类名 如java.lang.String
+     * @return true 非java类型
+     */
+    public static boolean isJavaClass(String clz) {
+        try {
+            return clz != null && Class.forName(clz).getClassLoader() == null;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    /**
      * 首字母大写
      * @param str
      * @return

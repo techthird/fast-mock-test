@@ -10,18 +10,15 @@ import com.thoughtworks.qdox.model.JavaMethod;
 import com.thoughtworks.qdox.model.JavaParameter;
 import fast.mock.test.core.constant.CommonConstant;
 import fast.mock.test.core.constant.InitConstant;
-import fast.mock.test.core.util.CommonUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.plugin.logging.SystemStreamLog;
 import fast.mock.test.core.dto.JavaMockClassInfoDTO;
 import fast.mock.test.core.dto.JavaMockMethodInfoDTO;
 import fast.mock.test.core.dto.JavaParameterDTO;
 import fast.mock.test.core.info.JavaClassInfo;
-import fast.mock.test.core.model.JavaClassModel;
-import fast.mock.test.core.model.JavaGenericModel;
-import fast.mock.test.core.model.JavaMethodModel;
-import fast.mock.test.core.model.JavaParameteModel;
+import fast.mock.test.core.model.*;
+import fast.mock.test.core.util.CommonUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugin.logging.SystemStreamLog;
 
 import java.util.*;
 
@@ -321,9 +318,29 @@ public class MockClassInfoHandle {
 
         javaMethodModel.setGenericValue(javaMethod.getReturnType().getGenericValue());
         List<JavaGenericModel> javaGenericModelList = new ArrayList<>();
+
+
         String genericFullyQualifiedName = javaMethod.getReturnType().getGenericFullyQualifiedName();
         if (StringUtils.isNotBlank(genericFullyQualifiedName) && !CommonUtils.isJavaDataType(javaMethodModel.getGenericValue())) {
-            if (genericFullyQualifiedName.contains(",")) {
+            JavaGenericModel javaGenericModel = new JavaGenericModel();
+            List<ObjectModel> objectModelList = new ArrayList<>();
+
+            String genericValue = javaMethod.getReturnType().getGenericValue();
+            Arrays.asList(genericFullyQualifiedName.split("<")).forEach(name -> {
+                name = name.replaceAll(">", "");
+                if (name.indexOf(",") != -1) {
+                    Arrays.asList(name.split(",")).forEach(name2 -> {
+                        objectModelList.add(getObjectModel(name2));
+                    });
+                } else {
+                    objectModelList.add(getObjectModel(name));
+                }
+            });
+            javaGenericModel.setGenericName(genericFullyQualifiedName.substring(genericFullyQualifiedName.lastIndexOf(".")+1,genericFullyQualifiedName.length()-1).replaceAll(">",""));
+            //javaGenericModel.setGenericFullyQualifiedName(genericFullyQualifiedName.substring(genericFullyQualifiedName.indexOf("<")+1,genericFullyQualifiedName.length()-1));
+            javaGenericModel.setObjectModelList(objectModelList);
+
+            /*if (genericFullyQualifiedName.contains(",")) {
                 // map
                 String[] nameArr = genericFullyQualifiedName.split(",");
                 for (String name : nameArr) {
@@ -342,12 +359,22 @@ public class MockClassInfoHandle {
                 javaGenericModel.setGenericName(genericFullyQualifiedName.substring(genericFullyQualifiedName.lastIndexOf(".")+1,genericFullyQualifiedName.length()-1));
                 javaGenericModel.setGenericFullyQualifiedName(genericFullyQualifiedName.substring(genericFullyQualifiedName.indexOf("<")+1,genericFullyQualifiedName.length()-1));
                 javaGenericModelList.add(javaGenericModel);
-            }
+            }*/
+            javaMethodModel.setJavaGenericModel(javaGenericModel);
         }
         // 返回类型为泛型的时候需要再次获取对象信息
 
-        javaMethodModel.setJavaGenericModelList(javaGenericModelList);
+        //javaMethodModel.setJavaGenericModelList(javaGenericModelList);
+
         return javaMethodModel;
+    }
+
+    private static ObjectModel getObjectModel(String name) {
+        ObjectModel objectModel = new ObjectModel();
+        String objectName = name.substring(name.lastIndexOf(".") + 1, name.length());
+        objectModel.setObjectName(objectName);
+        objectModel.setObjectFullyName(name);
+        return objectModel;
     }
 
 

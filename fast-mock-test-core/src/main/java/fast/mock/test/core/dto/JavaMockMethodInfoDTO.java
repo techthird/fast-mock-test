@@ -66,7 +66,7 @@ public class JavaMockMethodInfoDTO {
     /**泛型值 IPage<User>*/
     private String genericValue;
     /**泛型列表 list map */
-    private List<JavaGenericModel> javaGenericModelList;
+    private JavaGenericModel javaGenericModel;
     // 是否属于基础数据类型
     private Boolean isBaseDataType;
     // 默认值

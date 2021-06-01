@@ -4,14 +4,20 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.venusplan.framework.api.DataRO;
+import com.venusplan.framework.api.PageRO;
 import fast.mock.test.demo.entity.TableSharding;
+import fast.mock.test.demo.entity.User;
+import fast.mock.test.demo.entity.UserTemplate;
 import fast.mock.test.demo.mapper.TableShardingMapper;
 import fast.mock.test.demo.query.TableShardingQueryBo;
 import fast.mock.test.demo.service.ITableShardingService;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -42,6 +48,13 @@ public class TableShardingServiceImpl extends ServiceImpl<TableShardingMapper, T
     @Override
     public TableSharding getOne(TableShardingQueryBo query) {
         QueryWrapper<TableSharding> queryWrapper = query.buildQuery();
+        return this.getOne(queryWrapper);
+    }
+
+    @Override
+    public TableSharding getOne2() {
+        System.out.println("222222");
+        QueryWrapper<TableSharding> queryWrapper = new TableShardingQueryBo().buildQuery();
         return this.getOne(queryWrapper);
     }
 
@@ -95,7 +108,51 @@ public class TableShardingServiceImpl extends ServiceImpl<TableShardingMapper, T
      * 测试string
      * @param query
      */
-    public String testString() {
+    public String testString(int a) {
+        return null;
+    }
+
+    public List<Map<String,Map<Integer,User>>> getListMap1(int a) {
+        return null;
+    }
+    public List<Map<Boolean,User>> getListMap2(int a) {
+        return null;
+    }
+    public Map<Boolean,User> getListMap2333(int a) {
+        return null;
+    }
+    public User getListMap2322233(int a) {
+        return null;
+    }
+    public List<User> getListMap2222(int a) {
+        return null;
+    }
+    public DataRO<User> getDataRo1(int a) {
+        return null;
+    }
+    public DataRO<List<User>> getDataRo2(UserTemplate userTemplate) {
+        return null;
+    }
+    public DataRO<Map<Boolean,User>> getMapDataRO(Map<String,User> map2) {
+        DataRO<Map<Boolean,User>> dataRO = new DataRO<>();
+        Map<Boolean, User> map = new HashMap<>(1);
+        User object = new User();
+        object.setId(11);
+        object.setName("11");
+        map.put(false,object);
+        dataRO.setData(map);
+        return dataRO;
+    }
+    public DataRO<List<Map<Boolean,User>>> getDataRo3(int a) {
+        DataRO<List<Map<Boolean,User>>> dataRO = new DataRO<>();
+        List<Map<Boolean, User>> list = new ArrayList<>(1);
+        Map<Boolean, User> map = new HashMap<>(1);
+        User object = new User();
+        object.setId(11);
+        object.setName("11");
+        map.put(false,object);
+        list.add(map);
+        dataRO.setData(list);
         return null;
     }
 
@@ -106,4 +163,13 @@ public class TableShardingServiceImpl extends ServiceImpl<TableShardingMapper, T
         return false;
     }
 
+    public PageRO<User> getPage1(int i) {
+        return null;
+    }
+    public PageRO<List<User>> getPage2(int i) {
+        return null;
+    }
+    public DataRO<Integer> getDataRO22(int i) {
+        return null;
+    }
 }

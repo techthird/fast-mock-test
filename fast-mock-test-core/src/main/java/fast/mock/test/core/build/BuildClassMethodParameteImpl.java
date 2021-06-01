@@ -252,6 +252,7 @@ public class BuildClassMethodParameteImpl {
 
                     //全称需要增加到导入的包中
                     FullNameHandle.addQualifiedNameToImplementsPackageMap(javaParameterDTO1, javaGenInfoModel.getImplementsJavaPackageMap());
+
                 }
             }
 

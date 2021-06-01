@@ -1,12 +1,11 @@
 package fast.mock.test.demo.service;
 
-import fast.mock.test.demo.entity.TableSharding;
-import fast.mock.test.demo.query.TableShardingQueryBo;
-import fast.mock.test.demo.entity.TableSharding;
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import fast.mock.test.demo.query.TableShardingQueryBo;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.service.IService;
+import fast.mock.test.demo.entity.TableSharding;
+import fast.mock.test.demo.query.TableShardingQueryBo;
+
 import java.util.List;
 
 /**
@@ -30,6 +29,7 @@ public interface ITableShardingService extends IService<TableSharding> {
      * @return
      */
     TableSharding getOne(TableShardingQueryBo query);
+    TableSharding getOne2();
 
     /**
      * 按照条件分页查询

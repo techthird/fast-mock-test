@@ -8,18 +8,14 @@ import com.thoughtworks.qdox.model.JavaClass;
 import com.thoughtworks.qdox.model.JavaMethod;
 import fast.mock.test.core.constant.CommonConstant;
 import fast.mock.test.core.constant.InitConstant;
-import fast.mock.test.core.util.CommonUtils;
-import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.plugin.logging.SystemStreamLog;
-import org.springframework.util.CollectionUtils;
 import fast.mock.test.core.dto.JavaMethodDTO;
 import fast.mock.test.core.dto.JavaMockMethodInfoDTO;
 import fast.mock.test.core.dto.JavaParameterDTO;
 import fast.mock.test.core.info.JavaClassInfo;
-import fast.mock.test.core.model.JavaClassModel;
-import fast.mock.test.core.model.JavaGenericModel;
-import fast.mock.test.core.model.JavaMethodModel;
-import fast.mock.test.core.model.JavaParameteModel;
+import fast.mock.test.core.model.*;
+import fast.mock.test.core.util.CommonUtils;
+import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugin.logging.SystemStreamLog;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -52,6 +48,7 @@ public class BuildMockClassMethodImpl {
         for (String name : mockFullyTypeNameMap.keySet()) {
 
             //name - 属性名称
+            //String pattern = name + "\\([\\S ]+\\);";
             String pattern = name + "\\([\\S ]+\\);";
             //正则匹配
             Pattern p = Pattern.compile(pattern);
@@ -118,9 +115,7 @@ public class BuildMockClassMethodImpl {
         log.info("获取到Mock的方法：" + str + ",javaMockMethodInfoDTO=" + javaMockMethodInfoDTO);
 
         javaMockMethodInfoDTO.setName(methodName);
-        String millis = System.currentTimeMillis()+"";
-        millis = millis.substring(millis.length()-6,millis.length());
-        javaMockMethodInfoDTO.setReturnMethodName("get"+ CommonUtils.upperCase(methodName)+"_"+millis);
+        javaMockMethodInfoDTO.setReturnMethodName(methodName);
         int num = str.split(",").length;
         //判断是否是空参方法
         if (str.contains(javaMockMethodInfoDTO.getName() + "();")) {
@@ -206,7 +201,7 @@ public class BuildMockClassMethodImpl {
                 }
 
                 //获取父类是否包含一样的方法
-                String pType = methodModel.getParentClassFullyType();
+                /*String pType = methodModel.getParentClassFullyType();
                 log.info("methodModel="+methodModel+",pType="+pType);
                 JavaClass javaClass = CommonConstant.javaProjectBuilder.getClassByName(pType);
                 //获取方法
@@ -217,10 +212,39 @@ public class BuildMockClassMethodImpl {
                         Integer size =javaMethodModelMap.get(key);
                         javaMethodModelMap.put(key,++size);
                     }
-                }
+                }*/
 
                 // 处理mock的返回参数
-                if (!CollectionUtils.isEmpty(methodModel.getJavaGenericModelList())) {
+                if (methodModel.getJavaGenericModel() != null) {
+                    JavaGenericModel javaGenericModel = methodModel.getJavaGenericModel();
+                    List<ObjectModel> objectModelList = javaGenericModel.getObjectModelList();
+                    for (ObjectModel objectModel : objectModelList) {
+                        if (!CommonUtils.isJavaClass(objectModel.getObjectFullyName())) {
+                            // 方法参数-出参
+                            List<JavaParameterDTO> javaGenericParameterDTOList = new ArrayList<>();
+                            JavaClass genericClass = CommonConstant.javaProjectBuilder.getClassByName(objectModel.getObjectFullyName());
+                            //获取属性 - javaParameterDTOList需要排除没有set方法的属性值
+                            BuildClassMethodParameteImpl.addParameterToList(javaGenericParameterDTOList, genericClass, javaGenInfoModel);
+                            objectModel.setObjectParameterList(javaGenericParameterDTOList);
+                            objectModel.setIsCustomClass(true);
+
+                            Set<String> set = new HashSet<>();
+                            set.add(objectModel.getObjectFullyName());
+                            javaGenInfoModel.getImplementsJavaPackageMap().put(javaGenericModel.getGenericName(), set);
+                        }else{
+                            javaGenericModel.setIsBaseDataType(CommonUtils.isJavaDataType(objectModel.getObjectName()));
+                            String value = InitConstant.getValue(objectModel.getObjectName());
+                            objectModel.setDefaultValue(value);
+                        }
+                    }
+
+                    javaGenericModel.setIsBaseDataType(CommonUtils.isJavaDataType(javaGenericModel.getGenericName()));
+                    javaGenericModel.setIsCustomClass(!CommonUtils.isJavaClass(javaGenericModel.getObjectModelList().get(0).getObjectFullyName()));
+                    String value = InitConstant.getValue(javaGenericModel.getGenericName());
+                    javaGenericModel.setDefaultValue(value);
+
+                }
+               /* if (!CollectionUtils.isEmpty(methodModel.getJavaGenericModelList())) {
                     for (JavaGenericModel javaGenericModel : methodModel.getJavaGenericModelList()) {
                         if (!CommonUtils.isJavaDataType(javaGenericModel.getGenericName())) {
                             // 方法参数-出参
@@ -246,10 +270,10 @@ public class BuildMockClassMethodImpl {
                     //获取属性 - javaParameterDTOList需要排除没有set方法的属性值
                     BuildClassMethodParameteImpl.addParameterToList(javaReturnParameterDTOList, genericClass, javaGenInfoModel);
                     javaMockMethodInfoDTO.setJavaReturnParameterDTOList(javaReturnParameterDTOList);
-                }
+                }*/
 
                 javaMockMethodInfoDTO.setGenericValue(methodModel.getGenericValue());
-                javaMockMethodInfoDTO.setJavaGenericModelList(methodModel.getJavaGenericModelList());
+                javaMockMethodInfoDTO.setJavaGenericModel(methodModel.getJavaGenericModel());
             } catch (NullPointerException e) {
 //                log.error(e); 忽略
             }catch (Exception e) {

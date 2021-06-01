@@ -1,21 +1,15 @@
 package fast.mock.test.demo.controller;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import fast.mock.test.demo.entity.User;
+import fast.mock.test.demo.query.TableShardingQueryBo;
 import fast.mock.test.demo.query.UserQueryBo;
 import fast.mock.test.demo.result.ResultModel;
 import fast.mock.test.demo.service.IUserService;
-import fast.mock.test.demo.service.IUserService;
-import fast.mock.test.demo.entity.User;
-import fast.mock.test.demo.result.ResultModel;
+import fast.mock.test.demo.service.impl2.MyServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import fast.mock.test.demo.query.UserQueryBo;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * <p>
@@ -31,6 +25,8 @@ public class UserController {
 
     @Autowired
     private IUserService iUserService;
+    @Autowired
+    private MyServiceImpl myService;
 
     /**
      * 添加对象
@@ -60,6 +56,7 @@ public class UserController {
         if(id==null || id<0){
             return ResultModel.parameterError();
         }
+        myService.pageTestParent(new TableShardingQueryBo(), 0, 1);
         boolean success = iUserService.removeById(id);
         if(success) {
             return ResultModel.success();

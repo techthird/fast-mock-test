@@ -54,7 +54,7 @@ public class JavaMethodModel {
     /**泛型值 IPage<User>*/
     private String genericValue;
     /**泛型列表 list map */
-    private List<JavaGenericModel> javaGenericModelList;
+    private JavaGenericModel javaGenericModel;
 
 
 }

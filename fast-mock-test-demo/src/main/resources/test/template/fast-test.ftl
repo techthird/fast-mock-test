@@ -3,6 +3,7 @@
 */
 package ${javaClassDTO.packageName};
 
+import org.springframework.beans.factory.annotation.Autowired;
 import com.alibaba.testable.core.annotation.MockDiagnose;
 import com.alibaba.testable.core.annotation.MockMethod;
 import com.alibaba.testable.core.model.LogLevel;

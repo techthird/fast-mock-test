@@ -64,6 +64,8 @@ public class MyServiceImpl implements MyService{
         tableShardingService.getPage1(2);
         tableShardingService.getPage2(2);
         tableShardingService.getDataRO22(2);
+        tableShardingService.testInt2(false);
+
 
 
 

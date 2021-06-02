@@ -49,7 +49,8 @@ mvn fast-mock:test
 
 直接运行mvn fast-test:test即可下载模板文件&生成测试类 
 ![image](https://user-images.githubusercontent.com/20860404/120413358-b2f16600-c38a-11eb-95ae-691f7f1b8718.png)
-![image](https://user-images.githubusercontent.com/20860404/116179428-ea487380-a749-11eb-9c41-df22e7a9a5e5.png)
+![image](https://user-images.githubusercontent.com/20860404/120413570-209d9200-c38b-11eb-9ac3-142cf0e3e140.png)
+
 
 
 

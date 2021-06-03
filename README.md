@@ -26,8 +26,10 @@
         <artifactId>fast-mock-maven-plugin</artifactId>
         <version>1.0.0-SNAPSHOT</version>
         <configuration>
-            <!-- 待测试类的包名，或者测试指定类文件xxxx.java） -->
+            <!-- 待测试类的包名com.yunji.demo.service.provider，或者测试指定类文件xxxx.java） -->
             <testPackageName>com.yunji.demo.service.provider.ItemReadServiceImpl.java</testPackageName>
+            <!-- 指定生成Test方法，多个方法以,号分隔，默认生成一个类中所有方法 -->
+            <testMethods>method1,method2</testMethods>
         </configuration>
     </plugin>
     <plugin>

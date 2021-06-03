@@ -61,7 +61,7 @@ mvn primo-generator-mock-test:test
 ```<configPath></configPath>```填写路径，相对路径为当前运行项目的根路径。(默认下载路径：/src/main/resources/test/template)   
 fast-test:test命令，即可将配置文件下载到对应的路径。  
   
-可设置配置文件的文件名，通过```<configFileName>fast-test.ftl</configFileName>```设置配置文件的文件名称。（默认文件名称为fast-test.ftl）  
+可设置配置文件的文件名，通过```<configFileName>fast-mock.ftl</configFileName>```设置配置文件的文件名称。（默认文件名称为fast-mock.ftl）
 
 ### 3. 引入mock相关依赖  
 自动测试代码生成插件   

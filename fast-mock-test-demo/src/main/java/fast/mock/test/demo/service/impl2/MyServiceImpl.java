@@ -8,6 +8,7 @@ import fast.mock.test.demo.entity.TableSharding;
 import fast.mock.test.demo.entity.User;
 import fast.mock.test.demo.query.TableShardingQueryBo;
 import fast.mock.test.demo.query.UserQueryBo;
+import fast.mock.test.demo.service.IUserService;
 import fast.mock.test.demo.service.MyService;
 import fast.mock.test.demo.service.impl.TableShardingServiceImpl;
 import fast.mock.test.demo.service.impl.UserServiceImpl;
@@ -30,6 +31,8 @@ public class MyServiceImpl implements MyService{
 
     @Autowired
     private UserServiceImpl userService;
+    @Autowired
+    private IUserService userService2;
     @Autowired
     private TableShardingServiceImpl tableShardingService;
 
@@ -80,10 +83,17 @@ public class MyServiceImpl implements MyService{
     }
 
 
-    public Map<String,Object> maps(long pageNo, Integer pageSize){
+    public Map<String,Object> maps(long pageNo, Integer pageSize,Double aa,Boolean bo){
         Map<String, User> user = userService.getUserMap(null);
         List<Map<String, User>> listMap = userService.getListMap(1);
         return null;
+    }
+
+    public void maps2(long pageNo){
+        List<User> user = userService2.listUser(null);
+        List<Map<String, User>> listMap = userService.getListMap(1);
+        tableShardingService.getDataRO22(2);
+        tableShardingService.getDataRO22222(2);
     }
 
 

@@ -14,6 +14,7 @@ import fast.mock.test.demo.query.TableShardingQueryBo;
 import fast.mock.test.demo.service.ITableShardingService;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -170,6 +171,10 @@ public class TableShardingServiceImpl extends ServiceImpl<TableShardingMapper, T
         return null;
     }
     public DataRO<Integer> getDataRO22(int i) {
+        return null;
+    }
+
+    public DataRO<BigDecimal> getDataRO22222(int i) {
         return null;
     }
 }

@@ -109,6 +109,9 @@ public class FullNameHandle {
         List<JavaImplementsDTO> javaImplementsDTOList = new ArrayList<>();
         //全称限定名称
         for (String key : implementsJavaPackageMap.keySet()) {
+            if ("void".equals(key)) {
+                continue;
+            }
             JavaImplementsDTO javaImplementsDTO = new JavaImplementsDTO();
             Set<String> types = implementsJavaPackageMap.get(key);
             if (types.size() == 1) {

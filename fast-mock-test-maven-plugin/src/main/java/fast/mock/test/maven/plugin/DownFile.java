@@ -40,7 +40,7 @@ public class DownFile {
         String configPath = CommonConstant.CONFIG_ENTITY.getConfigPath();
         String path = CommonConstant.CONFIG_ENTITY.getBasedir().getPath() + configPath;
         try {
-            FileUtils.downLoadFile(CommonConstant.CONFIG_ENTITY.getConfigFileName(), path, "fast-test.ftl");
+            FileUtils.downLoadFile(CommonConstant.CONFIG_ENTITY.getConfigFileName(), path, "fast-mock.ftl");
         } catch (Exception e) {
             log.error("下载配置文件出现异常", e);
         }

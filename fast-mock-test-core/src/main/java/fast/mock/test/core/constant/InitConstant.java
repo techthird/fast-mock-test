@@ -177,7 +177,7 @@ public class InitConstant {
         VALUE.put("Boolean", "true");
         VALUE.put("Character", "'0'");
         VALUE.put("Byte", "0");
-        VALUE.put("Short", "0");
+        VALUE.put("Short", "(short)0");
 
         VALUE.put("int", "0");
         VALUE.put("long", "0L");
@@ -186,7 +186,7 @@ public class InitConstant {
         VALUE.put("boolean", "true");
         VALUE.put("char", "'0'");
         VALUE.put("byte", "0");
-        VALUE.put("short", "0");
+        VALUE.put("short", "(short)0");
 
         VALUE.put("StringBuffer", "new StringBuffer(\"\")");
         VALUE.put("StringBuilder", "new StringBuilder(\"\")");
@@ -198,6 +198,8 @@ public class InitConstant {
         VALUE.put("F", "new Object()");
 
         VALUE.put("Object", "new Object()");
+
+        VALUE.put("BigDecimal", "new BigDecimal(0)");
 
     }
 
@@ -315,15 +317,17 @@ public class InitConstant {
         ) {
             return "'" + StringUtils.getRandomChar() + "'";
         } else if (BaseTypeEnum.Byte_type.getValue().equals(type)
-                || BaseTypeEnum.byte_type.getValue().equals(type)
-        ) {
+                || BaseTypeEnum.byte_type.getValue().equals(type)) {
             int rand = RandomUtils.nextInt(0, 1);
             return "" + rand;
         } else if (BaseTypeEnum.Short_type.getValue().equals(type)
-                || BaseTypeEnum.short_type.getValue().equals(type)
-        ) {
+                || BaseTypeEnum.short_type.getValue().equals(type)) {
             int rand = RandomUtils.nextInt(0, 127);
-            return "" + rand;
+            return "(short)" + rand;
+        } else if (BaseTypeEnum.bigDecimal_type.getValue().equals(type)) {
+            return "new BigDecimal(\"0\")";
+        } else if (BaseTypeEnum.localDateTime.getValue().equals(type)) {
+            return "LocalDateTime.now()";
         }
         return null;
     }

@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableField;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -85,6 +86,9 @@ public class User implements Serializable {
 	@TableField(value="`role`")
 	private Integer role;
 
+	private Short shorA;
+	private BigDecimal bigDecimalsd;
+
 
 	public static final String ID="id";
 	public static final String NAME="name";
@@ -98,7 +102,23 @@ public class User implements Serializable {
 	public static final String DESCRIBE="describe";
 	public static final String ROLE="role";
 
-		
+
+	public Short getShorA() {
+		return shorA;
+	}
+
+	public void setShorA(Short shorA) {
+		this.shorA = shorA;
+	}
+
+	public BigDecimal getBigDecimalsd() {
+		return bigDecimalsd;
+	}
+
+	public void setBigDecimalsd(BigDecimal bigDecimalsd) {
+		this.bigDecimalsd = bigDecimalsd;
+	}
+
 	public Integer getId() {
         return id;
 	}

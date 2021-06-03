@@ -112,4 +112,10 @@ public class ConfigEntity {
      */
     protected Boolean isDownloadJsonFile;
 
+    /**
+     * 指定生成Test方法，多个方法以,号分隔，默认生成一个类中所有方法
+     */
+    protected String testMethods = "";
+
+
 }

@@ -31,6 +31,10 @@ public enum BaseTypeEnum {
     char_type("", "char"),
     byte_type("", "byte"),
     short_type("", "short"),
+
+    bigDecimal_type("", "BigDecimal"),
+    localDateTime("", "LocalDateTime"),
+
     ;
 
     private String name;

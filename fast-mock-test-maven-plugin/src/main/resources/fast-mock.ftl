@@ -9,6 +9,7 @@ import com.alibaba.testable.core.annotation.MockMethod;
 import com.alibaba.testable.core.model.LogLevel;
 import com.alibaba.testable.core.tool.TestableTool;
 import org.junit.*;
+import java.math.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import java.util.*;
@@ -85,8 +86,8 @@ public class ${javaClassDTO.modelNameUpperCamelTestClass} extends BaseTestCase {
     </#list>
 
         /** 3、调用方法 */
-        // ${method.comment!""}
-        ${method.returnType} obj = ${javaClassDTO.modelNameLowerCamel}.${method.methodName}(<#list method.javaParameterDTOList as parameter><#if parameter_index==0>${parameter.name}<#else>,${parameter.name}</#if></#list>);
+        /* ${method.comment!""} */
+        <#if !(method.returnType?contains("void"))>${method.returnType} obj = </#if>${javaClassDTO.modelNameLowerCamel}.${method.methodName}(<#list method.javaParameterDTOList as parameter><#if parameter_index==0>${parameter.name}<#else>,${parameter.name}</#if></#list>);
 
         /** 4、断言 */
         /*
@@ -109,13 +110,13 @@ public class ${javaClassDTO.modelNameUpperCamelTestClass} extends BaseTestCase {
     <#if method.javaMockMethodInfoDTOList??>
         <#list method.javaMockMethodInfoDTOList as mockMethInfo>
             <#if mockMethInfo.returnType=='void'>
-    // void
+        // void
             <#else >
         /**
          * ${mockMethInfo.comment!""}
          */
         @MockMethod(targetClass = ${mockMethInfo.classType}.class, targetMethod = "${mockMethInfo.returnMethodName}")
-        private ${mockMethInfo.genericValue!"void"} ${mockMethInfo.returnMethodName}(<#if mockMethInfo.javaParameterDTOList??><#list mockMethInfo.javaParameterDTOList as mockParameter><#if mockParameter_index==0>${mockParameter.type!""} ${mockParameter.name}<#else>,${mockParameter.type!""} ${mockParameter.name}</#if></#list></#if>) {
+        private ${mockMethInfo.genericValue!"void"} ${mockMethInfo.returnMethodName}(<#if mockMethInfo.javaParameterDTOList??><#list mockMethInfo.javaParameterDTOList as mockParameter><#if mockParameter_index==0>${mockParameter.type!""} ${mockParameter.name}Tmp<#else>,${mockParameter.type!""} ${mockParameter.name}Tmp</#if></#list></#if>) {
                 <#if mockMethInfo.isBaseDataType>
                 <#--基础数据类型-->
                 <#elseif mockMethInfo.javaGenericModel.isCustomClass && mockMethInfo.genericValue?contains(">>>")

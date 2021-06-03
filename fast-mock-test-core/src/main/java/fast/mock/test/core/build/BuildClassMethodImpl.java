@@ -4,18 +4,17 @@
  */
 package fast.mock.test.core.build;
 
+import com.thoughtworks.qdox.model.JavaClass;
+import com.thoughtworks.qdox.model.JavaMethod;
+import fast.mock.test.core.constant.CommonConstant;
 import fast.mock.test.core.constant.InitConstant;
 import fast.mock.test.core.dto.JavaMethodDTO;
 import fast.mock.test.core.dto.JavaMethodExceptionsDTO;
 import fast.mock.test.core.info.JavaClassInfo;
-import com.thoughtworks.qdox.model.JavaClass;
-import com.thoughtworks.qdox.model.JavaMethod;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugin.logging.SystemStreamLog;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 构建类中的方法
@@ -41,6 +40,8 @@ public class BuildClassMethodImpl {
         Map<String, Integer> methodMap = javaGenInfoModel.getMethodMap();
         //获取方法集合
         List<JavaMethod> javaMethodList = javaClass.getMethods();
+        // mock方法set 用以排除
+        Set<String> mockMethodSet = new HashSet<>(javaMethodList.size());
         //遍历类中的方法
         for (JavaMethod javaMethod : javaMethodList) {
 
@@ -61,7 +62,12 @@ public class BuildClassMethodImpl {
             javaMethodDTO.setReturnType(returnValueStr);
             javaMethodDTO.setComment(javaMethod.getComment());
 
-            //排除静态方法和私有方法
+            Set<String> set = new HashSet<>();
+            set.add(returnValue.getFullyQualifiedName());
+            javaGenInfoModel.getImplementsJavaPackageMap().put(returnValueStr, set);
+
+
+            //排除静态方法和私有方法 排除非指定的方法
             if (excludeMethod(javaMethod)) {
                 continue;
             }
@@ -75,7 +81,7 @@ public class BuildClassMethodImpl {
             javaMethodDTO.setJavaMethodExceptionsDTOList(javaMethodExceptionsDTOS);
 
             //Mock方法的设置
-            BuildMockClassMethodImpl.buildMock(javaGenInfoModel, javaMethod, javaMethodDTO);
+            BuildMockClassMethodImpl.buildMock(javaGenInfoModel, javaMethod, javaMethodDTO, mockMethodSet);
 
 
             javaMethodDTOList.add(javaMethodDTO);
@@ -104,12 +110,20 @@ public class BuildClassMethodImpl {
 
 
     /**
-     * 排除静态方法和私有方法
+     * 排除静态方法和私有方法  排除非指定的方法
      *
      * @param javaMethod 类方法信息
      * @return true-进行排除，false-不是静态方法和私有方法
      */
     private static boolean excludeMethod(JavaMethod javaMethod) {
+        // 排除非指定的方法
+        if(CommonConstant.CONFIG_ENTITY.getTestMethods()!=null){
+            List<String> listMethod = Arrays.asList(CommonConstant.CONFIG_ENTITY.getTestMethods().split(","));
+            if (listMethod.size() > 0 && !listMethod.contains(javaMethod.getName())) {
+                return true;
+            }
+        }
+
         //是否是静态方法
         boolean mStatic = javaMethod.isStatic();
         if (mStatic) {

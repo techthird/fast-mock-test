@@ -48,7 +48,7 @@ public abstract class AbstractPlugin extends AbstractMojo {
     /**
      * 配置文件名称
      */
-    @Parameter(defaultValue = "fast-test.ftl")
+    @Parameter(defaultValue = "fast-mock.ftl")
     protected String configFileName;
 
     /**
@@ -64,21 +64,26 @@ public abstract class AbstractPlugin extends AbstractMojo {
     protected String jsonConfigFileName;
 
     /**
-     * 是否将Template配置文件下载到本地，默认true
+     * 是否将Template配置文件下载到本地，默认false
      */
-    @Parameter(defaultValue = "true")
+    @Parameter(defaultValue = "false")
     protected Boolean isDownloadTemplateFile;
 
     /**
-     * 是否将json配置文件下载到本地，默认true
+     * 是否将json配置文件下载到本地，默认false
      */
-    @Parameter(defaultValue = "true")
+    @Parameter(defaultValue = "false")
     protected Boolean isDownloadJsonFile;
+    /**
+     * 指定生成Test方法，多个方法以,号分隔，默认生成一个类中所有方法
+     */
+    @Parameter(defaultValue = "")
+    protected String testMethods;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         if (basedir == null) {
-            ConfigEntity obj = JSON.parseObject("{\"basedir\":\"D:\\\\Workspaces\\\\YunjiProjects\\\\Other\\\\fast-mock-test\\\\fast-mock-test-demo\",\"configFileName\":\"fast-test.ftl\",\"configPath\":\"/src/main/resources/test/template/\\\\\",\"isDownloadJsonFile\":true,\"isDownloadTemplateFile\":true,\"jsonConfigFileName\":\"fast-test.json\",\"jsonConfigPath\":\"/src/main/resources/test/template/\\\\\",\"project\":\"fast-mock-test-demo\",\"target\":\"D:\\\\Workspaces\\\\YunjiProjects\\\\Other\\\\fast-mock-test\\\\fast-mock-test-demo\\\\target\"}", ConfigEntity.class);
+            ConfigEntity obj = JSON.parseObject("{\"basedir\":\"D:\\\\Workspaces\\\\YunjiProjects\\\\Other\\\\fast-mock-test\\\\fast-mock-test-demo\",\"configFileName\":\"fast-mock.ftl\",\"configPath\":\"/src/main/resources/test/template/\\\\\",\"isDownloadJsonFile\":false,\"isDownloadTemplateFile\":false,\"jsonConfigFileName\":\"fast-test.json\",\"jsonConfigPath\":\"/src/main/resources/test/template/\\\\\",\"project\":\"fast-mock-test-demo\",\"target\":\"D:\\\\Workspaces\\\\YunjiProjects\\\\Other\\\\fast-mock-test\\\\fast-mock-test-demo\\\\target\"}", ConfigEntity.class);
 
             basedir=obj.getBasedir();
             target=obj.getTarget();
@@ -102,6 +107,7 @@ public abstract class AbstractPlugin extends AbstractMojo {
         CommonConstant.CONFIG_ENTITY.setJsonConfigFileName(jsonConfigFileName);
         CommonConstant.CONFIG_ENTITY.setIsDownloadTemplateFile(isDownloadTemplateFile);
         CommonConstant.CONFIG_ENTITY.setIsDownloadJsonFile(isDownloadJsonFile);
+        CommonConstant.CONFIG_ENTITY.setTestMethods(testMethods);
 
 
         getLog().info("111----"+ JSON.toJSONString(CommonConstant.CONFIG_ENTITY));

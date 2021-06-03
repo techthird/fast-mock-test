@@ -31,12 +31,12 @@ public class BuildMockClassMethodImpl {
 
     /**
      * 构建mock的类方法信息
-     *
-     * @param javaGenInfoModel 存储的类信息
+     *  @param javaGenInfoModel 存储的类信息
      * @param javaMethod       方法信息
      * @param javaMethodDTO    模板的方法信息
+     * @param mockMethodSet
      */
-    public static void buildMock(JavaClassInfo javaGenInfoModel, JavaMethod javaMethod, JavaMethodDTO javaMethodDTO) {
+    public static void buildMock(JavaClassInfo javaGenInfoModel, JavaMethod javaMethod, JavaMethodDTO javaMethodDTO, Set<String> mockMethodSet) {
         //Mock方法模拟
         List<JavaMockMethodInfoDTO> javaMockMethodInfoDTOList = new ArrayList<>();
         //获取方法的源码
@@ -54,8 +54,9 @@ public class BuildMockClassMethodImpl {
             Pattern p = Pattern.compile(pattern);
             // 获取 matcher 对象
             Matcher m = p.matcher(methodCode);
-            while (m.find()) {
+            while (m.find() && !mockMethodSet.contains(name)) {
                 saveMockMethodInfoDTO(javaGenInfoModel, javaMockMethodInfoDTOList, methodCode, name, m);
+                mockMethodSet.add(name);
             }
         }
         javaMethodDTO.setJavaMockMethodInfoDTOList(javaMockMethodInfoDTOList);

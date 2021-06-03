@@ -18,7 +18,7 @@ public class CommonUtils {
                 "int".equals(name) || "long".equals(name) || "float".equals(name) || "double".equals(name) ||
                 "Boolean".equals(name) || "Byte".equals(name) || "Character".equals(name) || "Short".equals(name) ||
                 "Integer".equals(name) || "Long".equals(name) || "Float".equals(name) || "Double".equals(name) ||
-                "void".equals(name) || "String".equals(name) || "Object".equals(name);
+                "void".equals(name) || "String".equals(name) || "Object".equals(name) || "BigDecimal".equals(name);
     }
 
     /**
@@ -30,7 +30,6 @@ public class CommonUtils {
         try {
             return clz != null && Class.forName(clz).getClassLoader() == null;
         } catch (Exception e) {
-            e.printStackTrace();
         }
         return false;
     }

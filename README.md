@@ -64,6 +64,7 @@ PS：团队前期没有单测的沉淀，可以先从整个接口的集成测试
 mvn fast-mock:test
 ```   
 默认生成测试代码存放目录：test/你的测试类包名  
+
 ![image](https://user-images.githubusercontent.com/20860404/120413358-b2f16600-c38a-11eb-95ae-691f7f1b8718.png)
 ![image](https://user-images.githubusercontent.com/20860404/120413784-825dfc00-c38b-11eb-96eb-20f0abda2d66.png)
 ![image](https://user-images.githubusercontent.com/20860404/121116700-88e7ea00-c849-11eb-908f-83dce6c263b1.png)

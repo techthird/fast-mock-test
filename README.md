@@ -1,10 +1,25 @@
-# fast-mock-test
+fast-mock是一个快速生成测试类、Mock方法的框架，它使写集成、单元测试这件事情，变得简单而有趣！
+
+一方面，写单元测试本身比较繁琐，技术挑战不大，很多程序员不愿意去写；
+另一方面，国内研发比较偏向“快、糙、猛” ，容易因为开发进度紧，导致单元测试的执行虎头蛇尾。
+关键问题还是研发团队需要建立对单元测试正确的认知，渐进明细，逐步改进。
+
+fast-mock可以解决繁琐的单测编写，提升工作效率，让程序员更专注业务的实现。
+PS：团队前期没有单测的沉淀，可以先从整个接口的集成测试开始，逐步重构代码，往单测的方向靠近。
+
+## 特点
+* **快速生成测试类**： 生成一个包含设置Case名称、组装测试接口的参数、调用方法、断言的测试模板。
+* **自动识别生成Mock方法**：根据测试接口自动识别需要Mock的方法，并且进行代码生成。
+* **自动构造入参、出参实体**：根据入参、出参对象，自动进行数据构造。简单理解就是实例化对象，并进行set操作。
+
+
 ## 使用  
 ### 1、引入mock依赖：
 ```
 <properties>
     <testable.version>0.6.2</testable.version>
 </properties>
+
 <dependency>
     <groupId>junit</groupId>
     <artifactId>junit</artifactId>
@@ -44,14 +59,15 @@
 ```
 
 ### 3、生成测试代码 
-在引入插件的项目模块下运行maven插件的 fast-mock:test 命令
+在引入插件的项目模块下运行maven插件 fast-mock:test 命令
 ```
 mvn fast-mock:test
 ```   
-
-直接运行mvn fast-test:test即可下载模板文件&生成测试类 
 ![image](https://user-images.githubusercontent.com/20860404/120413358-b2f16600-c38a-11eb-95ae-691f7f1b8718.png)
 ![image](https://user-images.githubusercontent.com/20860404/120413784-825dfc00-c38b-11eb-96eb-20f0abda2d66.png)
+
+## 感谢
+
 
 
 

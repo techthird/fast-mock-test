@@ -69,7 +69,8 @@ mvn fast-mock:test
 
 
 ## 感谢
-
+1、一个堪称指哪打哪的Mock框架 [https://github.com/alibaba/testable-mock]  
+2、站在巨人的肩膀上，完成二次改造[https://github.com/chenhaoxiang/primo/tree/master/primo-generator-mock-test]
 
 
 

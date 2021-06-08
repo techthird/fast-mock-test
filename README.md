@@ -54,6 +54,7 @@ PS：团队前期没有单测的沉淀，可以先从整个接口的集成测试
         <version>2.22.2</version>
         <configuration>
             <argLine>-javaagent:${settings.localRepository}/com/alibaba/testable/testable-agent/${testable.version}/testable-agent-${testable.version}.jar</argLine>
+            <skip>true</skip>
         </configuration>
     </plugin>
 </plugins>

@@ -139,7 +139,7 @@
             <plugin>
                 <groupId>io.github.techthird</groupId>
                 <artifactId>fast-mock-maven-plugin</artifactId>
-                <version>1.0.0-SNAPSHOT</version>
+                <version>1.0.0</version>
                 <configuration>
                     <testPackageName>fast.mock.test.demo.service.impl2.MyServiceImpl.java</testPackageName>
                     <testMethods>maps2</testMethods>

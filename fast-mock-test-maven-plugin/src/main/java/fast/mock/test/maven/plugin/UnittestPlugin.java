@@ -7,16 +7,17 @@ package fast.mock.test.maven.plugin;
 import com.alibaba.fastjson.JSON;
 import com.thoughtworks.qdox.JavaProjectBuilder;
 import com.thoughtworks.qdox.model.JavaClass;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.plugins.annotations.Parameter;
 import fast.mock.test.core.constant.CommonConstant;
 import fast.mock.test.core.entity.ConfigEntity;
+import fast.mock.test.core.info.JavaClassInfo;
 import fast.mock.test.core.util.PackageUtils;
 import fast.mock.test.core.util.StringUtils;
-import fast.mock.test.core.info.JavaClassInfo;
 import fast.mock.test.maven.plugin.base.AbstractPlugin;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,6 +35,7 @@ import java.util.Map;
 @Mojo(name = "test")
 public class UnittestPlugin extends AbstractPlugin {
 
+    protected Log log = this.getLog();
     /**
      * 需要测试的项目包名
      */
@@ -272,7 +274,11 @@ public class UnittestPlugin extends AbstractPlugin {
         getLog().info("加载当前模块的类：" + mainJava);
         //读取包下所有的测试的java类文件
         String testJava = basedir.getPath() + CommonConstant.JAVA_TEST_SRC;
-        CommonConstant.javaProjectBuilder.addSourceTree(new File(testJava));
+        try {
+            CommonConstant.javaProjectBuilder.addSourceTree(new File(testJava));
+        } catch (Exception e) {
+            log.error("读取包下所有的测试的java类文件 异常" + e.getMessage());
+        }
         getLog().info("加载当前模块的测试类：" + testJava);
 
         //加载其他依赖的类 获取类加载器中的类

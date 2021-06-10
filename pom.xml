@@ -12,7 +12,7 @@
     <modules>
         <module>fast-mock-test-core</module>
         <module>fast-mock-test-maven-plugin</module>
-        <module>fast-mock-test-demo</module>
+<!--        <module>fast-mock-test-demo</module>-->
     </modules>
 
     <description>自动生成mock测试代码插件,通过Maven插件配置，一键生成配置包/类的单元测试代码，极大减少开发写单元测试代码的时间，提高单元测试覆盖率</description>
@@ -102,18 +102,32 @@
             <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
         </license>
     </licenses>
-
+    <scm>
+        <connection>https://github.com/techthird/fast-mock-test.git</connection>
+        <url>https://github.com/techthird/fast-mock-test</url>
+    </scm>
+    <developers>
+        <developer>
+            <name>techthird</name>
+            <roles>
+                <role>Developer</role>
+            </roles>
+            <timezone>+8</timezone>
+        </developer>
+    </developers>
 
     <profiles>
         <profile>
-            <id>sonatype-oss-release</id>
+            <id>snapshots</id>
             <build>
                 <plugins>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <!-- 使用1.5版本 -->
-                        <version>1.5</version>
+                        <version>1.6</version>
+                        <configuration>
+                            <skip>true</skip>
+                        </configuration>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
@@ -136,16 +150,16 @@
     </profiles>
 
     <distributionManagement>
-        <repository>
-            <id>nexus</id>
-            <name>yunji-releases</name>
-            <url>http://nexus.yunjiglobal.com/repository/yunji-releases/</url>
-        </repository>
         <snapshotRepository>
-            <id>nexus</id>
-            <name>yunji-snapshots</name>
-            <url>http://nexus.yunjiglobal.com/repository/yunji-snapshots/</url>
+            <id>snapshots</id>
+            <name>Sonatype Nexus Snapshots</name>
+            <url>https://s01.oss.sonatype.org/content/repositories/snapshots/</url>
         </snapshotRepository>
+        <repository>
+            <id>snapshots</id>
+            <name>Nexus Release Repository</name>
+            <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
     </distributionManagement>
 
 </project>

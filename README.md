@@ -65,11 +65,23 @@ PS：团队前期没有单测的沉淀，可以先从整个接口的集成测试
 ```
 mvn fast-mock:test
 ```   
-默认生成测试代码存放目录：test/你的测试类包名  
+默认生成测试代码存放目录：test/你的测试类包名 
 
 ![image](https://user-images.githubusercontent.com/20860404/120413358-b2f16600-c38a-11eb-95ae-691f7f1b8718.png)
 ![image](https://user-images.githubusercontent.com/20860404/120413784-825dfc00-c38b-11eb-96eb-20f0abda2d66.png)
 ![image](https://user-images.githubusercontent.com/20860404/121116700-88e7ea00-c849-11eb-908f-83dce6c263b1.png)
+
+### 4、小提示
+* 重复生成：一个类重复生成，为了防止代码的覆盖，将会创建多个测试类。如图：
+![image](https://user-images.githubusercontent.com/20860404/122722299-1bee3e80-d2a4-11eb-8f21-6d084d067c77.png)
+* BaseTestCase类的说明：该类定义了启动Spring应用程序所需的配置。默认配置如下：
+```
+@RunWith(SpringJUnit4ClassRunner.class)
+@SpringBootTest
+public class BaseTestCase {
+
+}
+```
 
 
 ## 感谢

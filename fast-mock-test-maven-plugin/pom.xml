@@ -5,7 +5,7 @@
     <parent>
         <groupId>io.github.techthird</groupId>
         <artifactId>fast-mock</artifactId>
-        <version>1.0.0</version>
+        <version>${fast-mock-version}</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -24,20 +24,13 @@
         <dependency>
             <groupId>io.github.techthird</groupId>
             <artifactId>fast-mock-core</artifactId>
-            <version>1.0.0</version>
+            <version>${fast-mock-version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-plugin-api</artifactId>
             <version>${maven.version}</version>
         </dependency>
-
-<!--        <dependency>-->
-<!--            <groupId>org.apache.maven.plugin-tools</groupId>-->
-<!--            <artifactId>maven-plugin-annotations</artifactId>-->
-<!--            <version>3.3</version>-->
-<!--            <scope>provided</scope>-->
-<!--        </dependency>-->
 
         <!-- THIS is the important part -->
         <dependency>

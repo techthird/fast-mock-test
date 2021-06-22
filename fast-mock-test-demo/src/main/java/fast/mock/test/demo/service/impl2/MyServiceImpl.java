@@ -54,6 +54,8 @@ public class MyServiceImpl implements MyService{
         userQueryBo1.setEmail("test222@qq.com");
         userQueryBo1.setName("fdaf222222222222d打发第三方");
 
+        userService2.listUser(userQueryBo1);
+
         tableShardingService.getDataRo3(22);
         tableShardingService.getDataRo2(null);
         tableShardingService.getMapDataRO(null);
@@ -94,7 +96,14 @@ public class MyServiceImpl implements MyService{
         List<Map<String, User>> listMap = userService.getListMap(1);
         tableShardingService.getDataRO22(2);
         tableShardingService.getDataRO22222(2);
+        tableShardingService.getCompute2(1);
     }
+    public void getCompute(long pageNo){
+        tableShardingService.getCompute(2);
+    }
+
+
+
 
 
 

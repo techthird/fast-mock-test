@@ -5,34 +5,24 @@
 package fast.mock.test.maven.plugin;
 
 import com.alibaba.fastjson.JSON;
-import fast.mock.test.core.build.impl.BuildClassImpl;
-import fast.mock.test.core.constant.CommonConstant;
-import fast.mock.test.core.util.StringUtils;
-import fast.mock.test.core.util.UUIDUtils;
-import fast.mock.test.core.json.JsonConfig;
-import fast.mock.test.core.dto.JavaClassDTO;
-import fast.mock.test.core.info.JavaClassInfo;
 import com.thoughtworks.qdox.model.JavaClass;
 import com.thoughtworks.qdox.model.JavaMethod;
+import fast.mock.test.core.build.impl.BuildClassImpl;
+import fast.mock.test.core.constant.CommonConstant;
+import fast.mock.test.core.dto.JavaClassDTO;
+import fast.mock.test.core.info.JavaClassInfo;
+import fast.mock.test.core.json.JsonConfig;
+import fast.mock.test.core.util.StringUtils;
 import freemarker.template.Configuration;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugin.logging.SystemStreamLog;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author chenhx
@@ -129,12 +119,13 @@ public class GenJava {
                 log.info(testFile + "生成成功");
             } else {
                 //文件已经存在，进行追加方法
+                // 生成新的Case
                 File newFile = fileIsExists(javaClassInfo.getTypeName(), cfg, testMethodNameSet, testFile, javaClassDTO, data, javaClassInfo);
-                if (newFile == null) {
+                /*if (newFile == null) {
                     log.error(javaClassInfo.getFullyTypeName()+" 追加方法失败");
                     return;
-                }
-                log.info(testFile + ", 追加方法成功，生成的临时文件:" + newFile);
+                }*/
+                //log.info(testFile + ", 追加方法成功，生成的临时文件:" + newFile);
             }
         } catch (Exception e) {
             log.error("生成失败，出现异常", e);
@@ -156,13 +147,23 @@ public class GenJava {
      * @throws TemplateException 模板异常
      * @throws IOException       流异常
      */
-    private static File fileIsExists(String className, Configuration configuration, Set<String> testMethodNameSet, File file, JavaClassDTO javaClassDTO, Map<String, Object> data, JavaClassInfo javaClassInfo) throws TemplateException, IOException {
-        String testJavaName;//测试类已经存在了
-        String randId = UUIDUtils.getID();
-        testJavaName = CommonConstant.CONFIG_ENTITY.getBasedir() + CommonConstant.JAVA_TEST_SRC + javaClassInfo.getPackageName().replace(".", "/") + "/" + className + randId + CommonConstant.TEST_CLASS_SUFFIX + ".java";
+    private static File fileIsExists(String className, Configuration configuration, Set<String> testMethodNameSet,
+                                     File file, JavaClassDTO javaClassDTO, Map<String, Object> data,
+                                     JavaClassInfo javaClassInfo) throws TemplateException, IOException {
+        String testJavaName = null;//测试类已经存在了
+        String randId = "";
+        // 检查文件名
+        for (int i = 1; i < Integer.MAX_VALUE; i++) {
+            randId = i < 10 ? "0" + i : i + "";
+            testJavaName = getTestJavaName(javaClassInfo, className, randId);
+            File newFile = new File(testJavaName);
+            if (!newFile.exists()) {
+                break;
+            }
+        }
 
-        javaClassDTO.setModelNameUpperCamelTestClass(className + randId + CommonConstant.TEST_CLASS_SUFFIX);
-        javaClassDTO.setModelNameLowerCamelTestClass(StringUtils.strConvertLowerCamel(className + randId + CommonConstant.TEST_CLASS_SUFFIX));
+        javaClassDTO.setModelNameUpperCamelTestClass(className + CommonConstant.TEST_CLASS_SUFFIX + "_"+ randId);
+        javaClassDTO.setModelNameLowerCamelTestClass(StringUtils.strConvertLowerCamel(className + CommonConstant.TEST_CLASS_SUFFIX + "_"+ randId));
 
         File newFile = new File(testJavaName);
         if (!newFile.getParentFile().exists() && !newFile.getParentFile().mkdirs()) {
@@ -171,15 +172,15 @@ public class GenJava {
         }
         configuration.getTemplate(CommonConstant.CONFIG_ENTITY.getConfigFileName()).process(data, new FileWriter(newFile));
         //读取类的方法
-        String newClassName = javaClassInfo.getPackageName() + "." + className + randId + CommonConstant.TEST_CLASS_SUFFIX;
+        String newClassName = javaClassInfo.getPackageName() + "." + className + CommonConstant.TEST_CLASS_SUFFIX + "_"+ randId;
         log.info("获取临时生成的类名:" + newClassName);
         //读取包下所有的测试的java类文件
         CommonConstant.javaProjectBuilder.addSourceTree(newFile);
 
-        JavaClass testJavaClass = CommonConstant.javaProjectBuilder.getClassByName(newClassName);
+       /* JavaClass testJavaClass = CommonConstant.javaProjectBuilder.getClassByName(newClassName);
         List<JavaMethod> javaMethodList = testJavaClass.getMethods();
-        log.info("获取的方法名称:" + javaMethodList);
-        for (JavaMethod javaMethod : javaMethodList) {
+        log.info("获取的方法名称:" + javaMethodList);*/
+        /*for (JavaMethod javaMethod : javaMethodList) {
             if (!testMethodNameSet.contains(javaMethod.getName())) {
                 //新增的方法 - 测试方法的源码
                 String code = javaMethod.getSourceCode();
@@ -234,8 +235,14 @@ public class GenJava {
         //删除文件
         if (!newFile.delete()) {
             log.error("删除临时文件失败，请检查是否有权限。文件:" + newFile);
-        }
+        }*/
         return newFile;
+    }
+
+    private static String getTestJavaName(JavaClassInfo javaClassInfo, String className, String randId) {
+        return CommonConstant.CONFIG_ENTITY.getBasedir() +
+                CommonConstant.JAVA_TEST_SRC +
+                javaClassInfo.getPackageName().replace(".", "/") + "/" + className + CommonConstant.TEST_CLASS_SUFFIX +"_"+ randId + ".java";
     }
 
     /**

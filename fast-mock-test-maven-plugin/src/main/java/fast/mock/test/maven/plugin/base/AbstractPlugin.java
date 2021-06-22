@@ -110,6 +110,6 @@ public abstract class AbstractPlugin extends AbstractMojo {
         CommonConstant.CONFIG_ENTITY.setTestMethods(testMethods);
 
 
-        getLog().info("111----"+ JSON.toJSONString(CommonConstant.CONFIG_ENTITY));
+        //getLog().info("111----"+ JSON.toJSONString(CommonConstant.CONFIG_ENTITY));
     }
 }

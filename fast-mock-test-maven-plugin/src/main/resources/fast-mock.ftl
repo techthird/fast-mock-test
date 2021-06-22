@@ -4,6 +4,8 @@
 package ${javaClassDTO.packageName};
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.alibaba.testable.core.annotation.MockDiagnose;
 import com.alibaba.testable.core.annotation.MockMethod;
 import com.alibaba.testable.core.model.LogLevel;
@@ -25,7 +27,9 @@ import ${implements.type};
 * @author ${javaClassDTO.author!''}
 * @date ${javaClassDTO.date!''}
 */
-public class ${javaClassDTO.modelNameUpperCamelTestClass} extends BaseTestCase {
+@RunWith(SpringJUnit4ClassRunner.class)
+@SpringBootTest
+public class ${javaClassDTO.modelNameUpperCamelTestClass} /*extends BaseTestCase*/ {
 
     @Autowired
     private ${javaClassDTO.modelNameUpperCamel} ${javaClassDTO.modelNameLowerCamel};

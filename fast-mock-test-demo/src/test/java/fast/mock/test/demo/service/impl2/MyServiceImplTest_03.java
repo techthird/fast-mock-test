@@ -28,12 +28,12 @@ import java.util.*;
 import static org.mockito.ArgumentMatchers.any;
 
 /**
-* MyServiceImplTest
+* MyServiceImplTest_02
 *
 * @author 
-* @date 2021-06-21 12:02:08
+* @date 2021-06-21 12:02:37
 */
-public class MyServiceImplTest extends BaseTestCase {
+public class MyServiceImplTest_03 extends BaseTestCase {
 
     @Autowired
     private MyServiceImpl myServiceImpl;
@@ -76,7 +76,7 @@ public class MyServiceImplTest extends BaseTestCase {
 
         long pageNo = 0L;
 
-        java.lang.Integer pageSize = 0;
+        Integer pageSize = 0;
 
         Double aa = 0.0;
 

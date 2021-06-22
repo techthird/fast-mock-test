@@ -177,4 +177,10 @@ public class TableShardingServiceImpl extends ServiceImpl<TableShardingMapper, T
     public DataRO<BigDecimal> getDataRO22222(int i) {
         return null;
     }
+    public DataRO<BigDecimal> getCompute2(int i) {
+        return null;
+    }
+    public DataRO<BigDecimal> getCompute(int i) {
+        return null;
+    }
 }

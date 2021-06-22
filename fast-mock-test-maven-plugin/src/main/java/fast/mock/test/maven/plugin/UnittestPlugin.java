@@ -239,7 +239,7 @@ public class UnittestPlugin extends AbstractPlugin {
         CommonConstant.CONFIG_ENTITY.setSetIntRandomRange(setIntRandomRange);
         CommonConstant.CONFIG_ENTITY.setSetLongRandomRange(setLongRandomRange);
 
-        getLog().info("222222----"+ JSON.toJSONString(CommonConstant.CONFIG_ENTITY));
+        //getLog().info("222222----"+ JSON.toJSONString(CommonConstant.CONFIG_ENTITY));
 
         //初始化json文件
         DownFile.downJsonFile();

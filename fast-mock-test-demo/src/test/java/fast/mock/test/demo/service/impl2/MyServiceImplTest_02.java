@@ -10,7 +10,6 @@ import com.alibaba.testable.core.tool.TestableTool;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.venusplan.framework.api.DataRO;
 import com.venusplan.framework.api.PageRO;
-import fast.mock.test.demo.BaseTestCase;
 import fast.mock.test.demo.entity.User;
 import fast.mock.test.demo.entity.UserTemplate;
 import fast.mock.test.demo.query.TableShardingQueryBo;
@@ -28,12 +27,12 @@ import java.util.*;
 import static org.mockito.ArgumentMatchers.any;
 
 /**
-* MyServiceImplTest
+* MyServiceImplTest_02
 *
 * @author 
-* @date 2021-06-21 12:02:08
+* @date 2021-06-21 12:02:37
 */
-public class MyServiceImplTest extends BaseTestCase {
+public class MyServiceImplTest_02 /*extends BaseTestCase*/ {
 
     @Autowired
     private MyServiceImpl myServiceImpl;

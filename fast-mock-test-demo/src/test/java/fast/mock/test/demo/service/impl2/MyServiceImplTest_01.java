@@ -10,7 +10,6 @@ import com.alibaba.testable.core.tool.TestableTool;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.venusplan.framework.api.DataRO;
 import com.venusplan.framework.api.PageRO;
-import fast.mock.test.demo.BaseTestCase;
 import fast.mock.test.demo.entity.User;
 import fast.mock.test.demo.entity.UserTemplate;
 import fast.mock.test.demo.query.TableShardingQueryBo;
@@ -20,7 +19,10 @@ import fast.mock.test.demo.service.IUserService;
 import fast.mock.test.demo.service.impl.TableShardingServiceImpl;
 import fast.mock.test.demo.service.impl.UserServiceImpl;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -28,12 +30,14 @@ import java.util.*;
 import static org.mockito.ArgumentMatchers.any;
 
 /**
-* MyServiceImplTest
+* MyServiceImplTest_01
 *
 * @author 
-* @date 2021-06-21 12:02:08
+* @date 2021-06-21 12:02:23
 */
-public class MyServiceImplTest extends BaseTestCase {
+@RunWith(SpringJUnit4ClassRunner.class)
+@SpringBootTest
+public class MyServiceImplTest_01{
 
     @Autowired
     private MyServiceImpl myServiceImpl;

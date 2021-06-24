@@ -69,14 +69,14 @@ public class DownFile {
             String jsonStr = "";
             if (!CommonConstant.CONFIG_ENTITY.getIsDownloadJsonFile()) {
                 //创建目录
-                ClassPathResource classPathResource = new ClassPathResource("fast-test.json");
+                ClassPathResource classPathResource = new ClassPathResource("fast-mock.json");
                 //得到输入流
                 InputStream inputStream = classPathResource.getInputStream();
                 jsonStr = FileUtils.readInputStreamToString(inputStream);
             }else {
                 String configPath = CommonConstant.CONFIG_ENTITY.getJsonConfigPath();
                 String path = CommonConstant.CONFIG_ENTITY.getBasedir().getPath() + configPath;
-                FileUtils.downLoadFile(CommonConstant.CONFIG_ENTITY.getJsonConfigFileName(), path, "fast-test.json");
+                FileUtils.downLoadFile(CommonConstant.CONFIG_ENTITY.getJsonConfigFileName(), path, "fast-mock.json");
 
                 //下载说明
 //                FileUtils.downLoadFile("fast-mock-test-description.md", path, "fast-mock-test-description.md");

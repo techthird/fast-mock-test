@@ -52,10 +52,12 @@ public class ConfigEntity {
     private String configPath;
 
     /**
-     * 配置文件名称
+     * 配置文件名称 fast-test.ftl
      */
     private String configFileName;
 
+    /**Mock模板文件名称 fast-mock.ftl*/
+    private String mockConfigFileName = "fast-mock.ftl";
 
     /**
      * 配置是否mock掉父类以及自身测试类非测试的方法

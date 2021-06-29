@@ -5,7 +5,7 @@
 package fast.mock.test.core.util;
 
 import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.plugin.logging.SystemStreamLog;
+import fast.mock.test.core.log.MySystemStreamLog;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -21,7 +21,7 @@ import java.net.URL;
  * @version UrlUtil.java, v 0.1 2019-06-11 18:37 chenhx
  */
 public class UrlUtils {
-    private static Log log = new SystemStreamLog();
+    private static Log log = new MySystemStreamLog();
 
     /**
      * 从网络Url中下载文件
@@ -36,13 +36,13 @@ public class UrlUtils {
         File saveDir = new File(savePath);
         if (!saveDir.exists()) {
             if (!saveDir.mkdirs()) {
-                log.info(savePath + " 文件路径不存在，进行创建失败，请检查是否有权限");
+                log.info(savePath + " 文件路径不存在，进行创建失败，请检查是否有权限.");
                 return;
             }
         }
         File file = new File(saveDir + File.separator + fileName);
         if (file.exists()) {
-            log.info("配置文件已经存在不进行下载，URL:" + urlStr + ",路径：" + savePath + ",文件名：" + fileName);
+            log.debug("配置文件已经存在不进行下载，URL:" + urlStr + ",路径：" + savePath + ",文件名：" + fileName);
             return;
         }
 
@@ -62,7 +62,7 @@ public class UrlUtils {
         fos.write(getData);
         fos.close();
         inputStream.close();
-        log.info("下载配置文件成功，URL:" + url + ",路径：" + savePath + ",文件名：" + fileName);
+        log.debug("下载配置文件成功，URL:" + url + ",路径：" + savePath + ",文件名：" + fileName);
     }
 
 }

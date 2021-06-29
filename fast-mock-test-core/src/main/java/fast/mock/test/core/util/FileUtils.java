@@ -5,7 +5,7 @@
 package fast.mock.test.core.util;
 
 import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.plugin.logging.SystemStreamLog;
+import fast.mock.test.core.log.MySystemStreamLog;
 import org.springframework.core.io.ClassPathResource;
 
 import java.io.BufferedReader;
@@ -26,7 +26,7 @@ import java.nio.charset.StandardCharsets;
  */
 public class FileUtils {
 
-    private static Log log = new SystemStreamLog();
+    private static Log log = new MySystemStreamLog();
 
     /**
      * 下载jar包文件到项目中
@@ -41,13 +41,13 @@ public class FileUtils {
         File saveDir = new File(savePath);
         if (!saveDir.exists()) {
             if (!saveDir.mkdirs()) {
-                log.info(savePath + " 文件路径不存在，进行创建失败，请检查是否有权限");
+                log.error(savePath + " 文件路径不存在，进行创建失败，请检查是否有权限");
                 return;
             }
         }
         File file = new File(saveDir + File.separator + fileName);
         if (file.exists()) {
-            log.info("配置文件已经存在，路径：" + savePath + ",文件名：" + fileName);
+            log.debug("配置文件已经存在，路径：" + savePath + ",文件名：" + fileName);
             return;
         }
 
@@ -63,7 +63,7 @@ public class FileUtils {
         fos.write(getData);
         fos.close();
         inputStream.close();
-        log.info("下载配置文件成功，路径：" + savePath + ",文件名：" + fileName);
+        log.debug("下载配置文件成功，路径：" + savePath + ",文件名：" + fileName);
     }
 
     /**

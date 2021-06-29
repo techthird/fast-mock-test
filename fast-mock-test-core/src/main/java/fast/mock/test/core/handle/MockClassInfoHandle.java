@@ -18,7 +18,7 @@ import fast.mock.test.core.model.*;
 import fast.mock.test.core.util.CommonUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.plugin.logging.SystemStreamLog;
+import fast.mock.test.core.log.MySystemStreamLog;
 
 import java.util.*;
 
@@ -27,7 +27,7 @@ import java.util.*;
  * @version MockClassInfoHandle.java, v 0.1 2019-06-24 17:21 chenhx
  */
 public class MockClassInfoHandle {
-    private static Log log = new SystemStreamLog();
+    private static Log log = new MySystemStreamLog();
 
 
     /**
@@ -118,14 +118,14 @@ public class MockClassInfoHandle {
                     for (JavaClass aClass : javaClassList) {
                         superClass = aClass;
                         // 第三方包，可以通过插件导入包解决解析源码问题
-                        log.info("获取的父类接口：" + superClass.getSource());
+                        log.debug("获取的父类接口：" + superClass.getSource());
                         handleSuperClass(javaClassInfo, javaField, javaMockClassInfoDTO, superClass, javaClassModel);
                     }
                 }
             } else {
                 //TODO 获取父类 - 暂时只支持两层 - 暂时也不支持其他jar包中的类,引入包即可
                 if (superClass != null) {
-                    log.info("获取的父类：" + superClass.getSource());
+                    log.debug("获取的父类：" + superClass.getSource());
                     handleSuperClass(javaClassInfo, javaField, javaMockClassInfoDTO, superClass, javaClassModel);
 
                 } else {
@@ -147,7 +147,7 @@ public class MockClassInfoHandle {
         }
 
         //属性的相关信息
-        log.info("本类属性相关信息，类：" + javaClass.getName());
+        log.debug("本类属性相关信息，类：" + javaClass.getName());
         return javaMockClassInfoDTOList;
     }
 

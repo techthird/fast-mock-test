@@ -11,8 +11,8 @@ import fast.mock.test.core.constant.InitConstant;
 import fast.mock.test.core.dto.JavaMethodDTO;
 import fast.mock.test.core.dto.JavaMethodExceptionsDTO;
 import fast.mock.test.core.info.JavaClassInfo;
+import fast.mock.test.core.log.MySystemStreamLog;
 import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.plugin.logging.SystemStreamLog;
 
 import java.util.*;
 
@@ -24,7 +24,7 @@ import java.util.*;
  */
 public class BuildClassMethodImpl {
 
-    private static Log log = new SystemStreamLog();
+    private static Log log = new MySystemStreamLog();
 
     /**
      * 构建测试类核心方法

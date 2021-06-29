@@ -7,21 +7,22 @@ package fast.mock.test.maven.plugin;
 import com.alibaba.fastjson.JSON;
 import com.thoughtworks.qdox.model.JavaClass;
 import com.thoughtworks.qdox.model.JavaMethod;
+import com.thoughtworks.qdox.model.JavaParameter;
 import fast.mock.test.core.build.impl.BuildClassImpl;
 import fast.mock.test.core.constant.CommonConstant;
 import fast.mock.test.core.dto.JavaClassDTO;
 import fast.mock.test.core.info.JavaClassInfo;
 import fast.mock.test.core.json.JsonConfig;
 import fast.mock.test.core.util.StringUtils;
+import fast.mock.test.core.util.UUIDUtils;
+import fast.mock.test.core.log.MySystemStreamLog;
 import freemarker.template.Configuration;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
 import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.plugin.logging.SystemStreamLog;
+import org.springframework.util.CollectionUtils;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 /**
@@ -30,8 +31,7 @@ import java.util.*;
  */
 public class GenJava {
 
-    private static Log log = new SystemStreamLog();
-
+    private static Log log = new MySystemStreamLog();
 
     public static void main(String[] args) {
 
@@ -72,14 +72,16 @@ public class GenJava {
 
             //已经生成的测试类的方法名称
             Set<String> testMethodNameSet = new HashSet<>();
+            Set<String> mockMethodNameSet = new HashSet<>();
 
             //文件是否存在，false-不存在
             boolean fileIsExists = false;
 
             File testFile = new File(javaClassInfo.getTestAbsolutePath());
+            File mockFile = new File(javaClassInfo.getMockAbsolutePath());
             //已经存在文件
             if (testFile.exists()) {
-                log.info(testFile + "已经存在，进行类方法追加生成");
+                log.info("已经存在，进行类方法追加生成！ "+ testFile +" "+ mockFile);
                 //获取当前测试的类信息
                 String testClassName = javaClassInfo.getPackageName() + "." + javaClassInfo.getTypeName() + CommonConstant.TEST_CLASS_SUFFIX;
                 JavaClass testJavaClass = CommonConstant.javaProjectBuilder.getClassByName(testClassName);
@@ -87,9 +89,19 @@ public class GenJava {
                 List<JavaMethod> javaMethodList = testJavaClass.getMethods();
                 for (JavaMethod javaMethod : javaMethodList) {
                     testMethodNameSet.add(javaMethod.getName());
-                    log.info("获取测试类的方法名称:" + javaMethod.getName());
+                    log.debug("获取测试类的方法名称:" + javaMethod.getName());
                 }
-                log.info("获取的已经生成的类方法名称为:" + javaMethodList + ",测试类：" + testClassName);
+                log.debug("获取的已经生成的类方法名称为:" + javaMethodList + ",测试类：" + testClassName);
+
+                // 处理mock类
+
+                String mockClassName = javaClassInfo.getPackageName() + "." + javaClassInfo.getTypeName() + CommonConstant.MOCK_CLASS_SUFFIX;
+                JavaClass mockJavaClass = CommonConstant.javaProjectBuilder.getClassByName(mockClassName);
+                //遍历方法
+                for (JavaMethod javaMethod : mockJavaClass.getMethods()) {
+                    mockMethodNameSet.add(javaMethod.getName());
+                }
+
                 fileIsExists = true;
 
             } else {
@@ -109,18 +121,21 @@ public class GenJava {
 
             Map<String, Object> data = new HashMap<>(2);
             data.put("javaClassDTO", javaClassDTO);
-            System.out.println("javaClassDTO：");
-            System.out.println(JSON.toJSONString(javaClassDTO));
+            log.debug("javaClassDTO：");
+            log.debug(JSON.toJSONString(javaClassDTO));
 
             //获取mock的类
             if (!fileIsExists) {
                 //文件不存在,进行初始化生成
                 cfg.getTemplate(CommonConstant.CONFIG_ENTITY.getConfigFileName()).process(data, new FileWriter(testFile));
-                log.info(testFile + "生成成功");
+                cfg.getTemplate(CommonConstant.CONFIG_ENTITY.getMockConfigFileName()).process(data, new FileWriter(mockFile));
+                log.info("生成成功！Test类：" + testFile);
+                log.info("生成成功！Mock类：" + mockFile);
             } else {
                 //文件已经存在，进行追加方法
                 // 生成新的Case
-                File newFile = fileIsExists(javaClassInfo.getTypeName(), cfg, testMethodNameSet, testFile, javaClassDTO, data, javaClassInfo);
+                File newTestFile = fileIsExists(javaClassInfo.getTypeName(), cfg, testMethodNameSet, testFile,mockMethodNameSet, mockFile, javaClassDTO, data, javaClassInfo);
+                //File newMockFile = appendMockFileIsExists(javaClassInfo.getTypeName(), cfg, mockMethodNameSet, mockFile, javaClassDTO, data, javaClassInfo);
                 /*if (newFile == null) {
                     log.error(javaClassInfo.getFullyTypeName()+" 追加方法失败");
                     return;
@@ -130,7 +145,6 @@ public class GenJava {
         } catch (Exception e) {
             log.error("生成失败，出现异常", e);
         }
-
     }
 
     /**
@@ -139,7 +153,7 @@ public class GenJava {
      * @param className         类名
      * @param configuration     Template模板生成文件
      * @param testMethodNameSet 已有测试方法的名称
-     * @param file              原有已生成的文件
+     * @param testFile              原有已生成的文件
      * @param javaClassDTO      生成的临时文件信息
      * @param data              模板的数据
      * @param javaClassInfo     类通用信息
@@ -147,49 +161,92 @@ public class GenJava {
      * @throws TemplateException 模板异常
      * @throws IOException       流异常
      */
-    private static File fileIsExists(String className, Configuration configuration, Set<String> testMethodNameSet,
-                                     File file, JavaClassDTO javaClassDTO, Map<String, Object> data,
+    private static File fileIsExists(String className, Configuration configuration, Set<String> testMethodNameSet, File testFile,
+                                    Set<String> mockMethodNameSet, File mockFile,JavaClassDTO javaClassDTO, Map<String, Object> data,
                                      JavaClassInfo javaClassInfo) throws TemplateException, IOException {
-        String testJavaName = null;//测试类已经存在了
-        String randId = "";
-        // 检查文件名
-        for (int i = 1; i < Integer.MAX_VALUE; i++) {
-            randId = i < 10 ? "0" + i : i + "";
-            testJavaName = getTestJavaName(javaClassInfo, className, randId);
-            File newFile = new File(testJavaName);
-            if (!newFile.exists()) {
-                break;
-            }
-        }
+        //测试类已经存在了
+        String randId = UUIDUtils.getID();
+        String testJavaName = getTestJavaName(javaClassInfo, className, randId);
 
         javaClassDTO.setModelNameUpperCamelTestClass(className + CommonConstant.TEST_CLASS_SUFFIX + "_"+ randId);
+        javaClassDTO.setModelNameUpperCamelMockClass(className + CommonConstant.MOCK_CLASS_SUFFIX + "_"+ randId);
         javaClassDTO.setModelNameLowerCamelTestClass(StringUtils.strConvertLowerCamel(className + CommonConstant.TEST_CLASS_SUFFIX + "_"+ randId));
 
-        File newFile = new File(testJavaName);
-        if (!newFile.getParentFile().exists() && !newFile.getParentFile().mkdirs()) {
-            log.error(newFile.getParentFile() + "生成失败，请检查是否有权限");
+        File newTestFile = new File(testJavaName);
+        if (!newTestFile.getParentFile().exists() && !newTestFile.getParentFile().mkdirs()) {
+            log.error(newTestFile.getParentFile() + "生成失败，请检查是否有权限");
             return null;
         }
-        configuration.getTemplate(CommonConstant.CONFIG_ENTITY.getConfigFileName()).process(data, new FileWriter(newFile));
-        //读取类的方法
-        String newClassName = javaClassInfo.getPackageName() + "." + className + CommonConstant.TEST_CLASS_SUFFIX + "_"+ randId;
-        log.info("获取临时生成的类名:" + newClassName);
-        //读取包下所有的测试的java类文件
-        CommonConstant.javaProjectBuilder.addSourceTree(newFile);
 
-       /* JavaClass testJavaClass = CommonConstant.javaProjectBuilder.getClassByName(newClassName);
+        String mockJavaName = getMockJavaName(javaClassInfo, className, randId);
+        File newMockFile = new File(mockJavaName);
+        if (!newMockFile.getParentFile().exists() && !newMockFile.getParentFile().mkdirs()) {
+            log.error(newMockFile.getParentFile() + "生成失败，请检查是否有权限");
+            return null;
+        }
+
+        configuration.getTemplate(CommonConstant.CONFIG_ENTITY.getConfigFileName()).process(data, new FileWriter(newTestFile));
+        configuration.getTemplate(CommonConstant.CONFIG_ENTITY.getMockConfigFileName()).process(data, new FileWriter(newMockFile));
+
+        //读取包下所有的测试的java类文件
+        CommonConstant.javaProjectBuilder.addSourceTree(newTestFile);
+        CommonConstant.javaProjectBuilder.addSourceTree(newMockFile);
+
+        //读取类的方法
+        String newTestClassName = javaClassInfo.getPackageName() + "." + className + CommonConstant.TEST_CLASS_SUFFIX + "_"+ randId;
+        String newMockClassName = javaClassInfo.getPackageName() + "." + className + CommonConstant.MOCK_CLASS_SUFFIX + "_"+ randId;
+        appendFile(newTestClassName, testMethodNameSet, testFile , newTestFile, true);
+        appendFile(newMockClassName, mockMethodNameSet, mockFile, newMockFile, false);
+
+        return newTestFile;
+    }
+
+    private static void appendFile(String newClassName, Set<String> testMethodNameSet, File file, File newFile,boolean isTest) throws TemplateException, IOException {
+
+        log.debug("获取临时生成的类名:" + newClassName);
+        JavaClass testJavaClass = CommonConstant.javaProjectBuilder.getClassByName(newClassName);
         List<JavaMethod> javaMethodList = testJavaClass.getMethods();
-        log.info("获取的方法名称:" + javaMethodList);*/
-        /*for (JavaMethod javaMethod : javaMethodList) {
+        log.debug("获取的方法名称:" + javaMethodList);
+        Set<String> appendSet = new HashSet<>();
+        for (JavaMethod javaMethod : javaMethodList) {
             if (!testMethodNameSet.contains(javaMethod.getName())) {
+                appendSet.add(javaMethod.getName());
+
                 //新增的方法 - 测试方法的源码
                 String code = javaMethod.getSourceCode();
                 log.debug("获取追加的方法源码为:" + code);
                 //原来的文件进行追加方法
-                String methodStr = "\n    @Test\n" +
-                        "    public void " + javaMethod.getName() + "(){\n" +
-                        code + "\n" +
-                        "    }\n}";
+                String methodStr;
+                if (isTest){
+                    methodStr = "\n    @Test\n" +
+                            "    public void " + javaMethod.getName() + "(){\n" +
+                            code + "\n" +
+                            "    }\n}";
+                } else {
+                    StringBuilder str = new StringBuilder();
+                    String codeBlock = javaMethod.getCodeBlock();
+                    str.append("\r\n");
+                    str.append("\t/**\n\t * "+javaMethod.getComment() +"\n\t */\r\n");
+                    str.append("\t");
+                    str.append(codeBlock.substring(codeBlock.indexOf("@"),codeBlock.indexOf("private")).replaceAll("\n|\t|com.alibaba.testable.core.annotation.",""));
+                    str.append("\r\n");
+                    str.append("\tprivate "+ javaMethod.getReturns().getGenericValue()+" "+javaMethod.getName()+"(");
+                    if (!CollectionUtils.isEmpty(javaMethod.getParameters())) {
+                        List<JavaParameter> parameters = javaMethod.getParameters();
+                        for (int i = 0; i < parameters.size(); i++) {
+                            JavaParameter parameter = parameters.get(i);
+                            str.append(i > 0 ? "," : "");
+                            str.append(parameter.getValue()+" "+parameter.getName());
+                        }
+                    }
+                    str.append("){");
+                    str.append(code);
+                    str.append("}\r\n}");
+
+                    methodStr = str.toString();
+                }
+
+
                 //文件追加
                 FileReader fileReader = new FileReader(file);
                 BufferedReader br = new BufferedReader(fileReader);
@@ -230,19 +287,34 @@ public class GenJava {
                 ps.println(fileStr);
                 ps.close();
             }
-            log.info("获取临时测试类的方法名称:" + javaMethod.getName());
+            log.debug("获取临时测试类的方法名称:" + javaMethod.getName());
+        }
+        if (!appendSet.isEmpty()) {
+            log.info((isTest?"Test":"Mock")+"类追加方法成功：" + JSON.toJSONString(appendSet));
         }
         //删除文件
         if (!newFile.delete()) {
-            log.error("删除临时文件失败，请检查是否有权限。文件:" + newFile);
-        }*/
-        return newFile;
+            for (int i = 0; i < 10; i++) {
+                System.gc(); // 强制删除
+                if (newFile.delete()) {
+                    break;
+                }
+            }
+            if (!newFile.delete()) {
+                log.debug("删除临时文件失败，请手动删除，若已删除请忽略！！！文件:" + newFile);
+            }
+        }
     }
 
     private static String getTestJavaName(JavaClassInfo javaClassInfo, String className, String randId) {
         return CommonConstant.CONFIG_ENTITY.getBasedir() +
                 CommonConstant.JAVA_TEST_SRC +
                 javaClassInfo.getPackageName().replace(".", "/") + "/" + className + CommonConstant.TEST_CLASS_SUFFIX +"_"+ randId + ".java";
+    }
+    private static String getMockJavaName(JavaClassInfo javaClassInfo, String className, String randId) {
+        return CommonConstant.CONFIG_ENTITY.getBasedir() +
+                CommonConstant.JAVA_TEST_SRC +
+                javaClassInfo.getPackageName().replace(".", "/") + "/" + className + CommonConstant.MOCK_CLASS_SUFFIX +"_"+ randId + ".java";
     }
 
     /**

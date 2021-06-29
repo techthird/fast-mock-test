@@ -20,7 +20,7 @@
         <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
         <java.version>1.8</java.version>
         <maven.deploy.skip>true</maven.deploy.skip>
-        <testable.version>0.6.2</testable.version>
+        <testable.version>0.6.7</testable.version>
         <junit.version>5.6.2</junit.version>
     </properties>
 
@@ -55,7 +55,7 @@
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-boot-starter</artifactId>
-            <version>3.2.0</version>
+            <version>3.3.0</version>
         </dependency>
         <!--druid依赖-->
         <dependency>
@@ -127,10 +127,11 @@
             <plugin>
                 <groupId>io.github.techthird</groupId>
                 <artifactId>fast-mock-maven-plugin</artifactId>
-                <version>1.0.0-SNAPSHOT</version>
+                <version>1.0.3</version>
                 <configuration>
                     <testPackageName>fast.mock.test.demo.service.impl2.MyServiceImpl.java</testPackageName>
                     <testMethods></testMethods>
+                    <isDebug>false</isDebug>
                 </configuration>
             </plugin>
 

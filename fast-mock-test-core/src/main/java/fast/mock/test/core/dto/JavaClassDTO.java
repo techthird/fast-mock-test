@@ -32,6 +32,10 @@ public class JavaClassDTO {
      * 测试类名
      */
     private String modelNameUpperCamelTestClass;
+    /**
+     * Mock类名
+     */
+    private String modelNameUpperCamelMockClass;
 
     /**
      * 测试类名 - 首字母小写

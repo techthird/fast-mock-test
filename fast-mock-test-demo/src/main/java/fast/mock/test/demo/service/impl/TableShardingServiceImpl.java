@@ -53,6 +53,11 @@ public class TableShardingServiceImpl extends ServiceImpl<TableShardingMapper, T
     }
 
     @Override
+    public long getOne(Integer a) {
+        return 0;
+    }
+
+    @Override
     public TableSharding getOne2() {
         System.out.println("222222");
         QueryWrapper<TableSharding> queryWrapper = new TableShardingQueryBo().buildQuery();

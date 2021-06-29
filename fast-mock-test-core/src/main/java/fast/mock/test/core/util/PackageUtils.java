@@ -6,7 +6,7 @@ package fast.mock.test.core.util;
 
 import fast.mock.test.core.constant.CommonConstant;
 import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.plugin.logging.SystemStreamLog;
+import fast.mock.test.core.log.MySystemStreamLog;
 
 import java.io.File;
 import java.net.URL;
@@ -23,7 +23,7 @@ import java.util.jar.JarFile;
  * @version PackageUtil.java, v 0.1 2019-06-10 11:02 chenhx
  */
 public class PackageUtils {
-    private static Log log = new SystemStreamLog();
+    private static Log log = new MySystemStreamLog();
 
     /**
      * 获取某包下所有类

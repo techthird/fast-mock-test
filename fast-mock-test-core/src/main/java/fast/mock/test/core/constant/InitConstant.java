@@ -8,7 +8,7 @@ import fast.mock.test.core.util.StringUtils;
 import fast.mock.test.core.enums.BaseTypeEnum;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.plugin.logging.SystemStreamLog;
+import fast.mock.test.core.log.MySystemStreamLog;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -47,7 +47,7 @@ public class InitConstant {
      * 对应类型的默认值
      */
     private static final Map<String, String> VALUE = new HashMap<>();
-    private static Log log = new SystemStreamLog();
+    private static Log log = new MySystemStreamLog();
 
     static {
         //初始化类型转换

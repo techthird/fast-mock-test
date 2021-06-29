@@ -8,7 +8,7 @@ import fast.mock.test.core.model.JavaClassModel;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.plugin.logging.SystemStreamLog;
+import fast.mock.test.core.log.MySystemStreamLog;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,7 +23,7 @@ import java.util.Set;
 @Data
 public class JavaClassInfo {
 
-    private static Log log = new SystemStreamLog();
+    private static Log log = new MySystemStreamLog();
 
     /**
      * 当前被测试类的包名
@@ -37,6 +37,10 @@ public class JavaClassInfo {
      * 被测试类的绝对路径
      */
     private String testAbsolutePath;
+    /**
+     * Mock类的绝对路径
+     */
+    private String mockAbsolutePath;
     /**
      * 被测试类的全限定名称
      */

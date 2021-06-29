@@ -20,7 +20,7 @@
     <description>自动生成mock测试代码插件,通过Maven插件配置，一键生成配置包/类的单元测试代码，极大减少开发写单元测试代码的时间，提高单元测试覆盖率</description>
 
     <properties>
-        <fast-mock-version>1.0.0-SNAPSHOT</fast-mock-version>
+        <fast-mock-version>1.0.3</fast-mock-version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.compiler.encoding>UTF-8</maven.compiler.encoding>

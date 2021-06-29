@@ -22,6 +22,10 @@ public class CommonConstant {
      */
     public static final String TEST_CLASS_SUFFIX = "Test";
     /**
+     * Mock类的对应类名 后缀
+     */
+    public static final String MOCK_CLASS_SUFFIX = "Mock";
+    /**
      * 项目文件路径
      */
     public static final String JAVA_MAIN_SRC = "/src/main/java/";

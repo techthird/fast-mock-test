@@ -19,7 +19,7 @@ import com.thoughtworks.qdox.model.JavaClass;
 import com.thoughtworks.qdox.model.JavaPackage;
 import com.thoughtworks.qdox.model.JavaType;
 import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.plugin.logging.SystemStreamLog;
+import fast.mock.test.core.log.MySystemStreamLog;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -34,7 +34,7 @@ import java.util.Set;
  * @version BuildClassImpl.java, v 0.1 2019-06-10 15:58 chenhx
  */
 public class BuildClassImpl {
-    private static Log log = new SystemStreamLog();
+    private static Log log = new MySystemStreamLog();
 
     /**
      * 生成测试类
@@ -51,6 +51,7 @@ public class BuildClassImpl {
         javaClassDTO.setModelNameUpperCamel(javaClassInfo.getTypeName());
         javaClassDTO.setModelNameLowerCamel(StringUtils.strConvertLowerCamel(javaClassInfo.getTypeName()));
         javaClassDTO.setModelNameUpperCamelTestClass(javaClassInfo.getTypeName() + CommonConstant.TEST_CLASS_SUFFIX);
+        javaClassDTO.setModelNameUpperCamelMockClass(javaClassInfo.getTypeName() + CommonConstant.MOCK_CLASS_SUFFIX);
         javaClassDTO.setModelNameLowerCamelTestClass(StringUtils.strConvertLowerCamel(javaClassInfo.getTypeName() + CommonConstant.TEST_CLASS_SUFFIX));
 
         //通过QDox 获取Java类

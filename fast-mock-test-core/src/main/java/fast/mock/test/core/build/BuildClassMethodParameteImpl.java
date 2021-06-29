@@ -22,7 +22,7 @@ import com.thoughtworks.qdox.model.JavaField;
 import com.thoughtworks.qdox.model.JavaMethod;
 import com.thoughtworks.qdox.model.JavaParameter;
 import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.plugin.logging.SystemStreamLog;
+import fast.mock.test.core.log.MySystemStreamLog;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
@@ -37,7 +37,7 @@ import java.util.Set;
  * @version BuildClassMethodParameteImpl.java, v 0.1 2019-06-27 16:51 chenhx
  */
 public class BuildClassMethodParameteImpl {
-    private static Log log = new SystemStreamLog();
+    private static Log log = new MySystemStreamLog();
 
     /**
      * 获取的参数
@@ -73,7 +73,7 @@ public class BuildClassMethodParameteImpl {
             javaParameterDTO.setClassfullyType(javaClass.getFullyQualifiedName());
             javaParameterDTO.setMethodfullyType(javaClass.getFullyQualifiedName() + "#" +javaMethod.getName());
             javaParameterDTO.setPackageName(javaClass.getPackageName());
-            log.info("当前的参数信息: "+javaParameterDTO);
+            log.debug("当前的参数信息: "+javaParameterDTO);
 
             //设置默认值
             javaParameterDTOSetValue(javaParameterDTO, InitConstant.getValue(type));
@@ -82,7 +82,7 @@ public class BuildClassMethodParameteImpl {
             if (javaParameterDTO.getValue() == null) {
                 //自定义类型 暂时处理一层包装类
                 JavaClass parameterJavaClass = CommonConstant.javaProjectBuilder.getClassByName(typeToStr);
-                log.info("自定义类型：" + typeToStr + "，cls：" + (parameterJavaClass == null ? "null" : parameterJavaClass.getFullyQualifiedName()));
+                log.debug("自定义类型：" + typeToStr + "，cls：" + (parameterJavaClass == null ? "null" : parameterJavaClass.getFullyQualifiedName()));
 
                 if (parameterJavaClass != null) {
 
@@ -233,16 +233,16 @@ public class BuildClassMethodParameteImpl {
                         List<JavaClass> javaClassList = javaClass.getDerivedClasses();
                         if (!javaClassList.isEmpty()) {
                             //处理List
-                            log.info("获取的属性类型为:" + fieldType);
+                            log.debug("获取的属性类型为:" + fieldType);
 
                             //取第一个
                             JavaClass javaClass2 = javaClassList.get(0);
-                            log.info("获取的属性父类信息：" + javaClass2.getFullyQualifiedName() + "，fullyTypeName=" + fullyTypeName + "，javaClass2.getName=" + javaClass2.getName() + "," + javaClass2.getSimpleName());
+                            log.debug("获取的属性父类信息：" + javaClass2.getFullyQualifiedName() + "，fullyTypeName=" + fullyTypeName + "，javaClass2.getName=" + javaClass2.getName() + "," + javaClass2.getSimpleName());
                             javaParameterDTO1.setCustomType(true);
                             fullyTypeName = javaClass2.getFullyQualifiedName();
                             javaParameterDTO1.setFullyType(fullyTypeName);
                             if ("List".equals(fullyTypeName)) {
-                                log.info("javaParameterDTOList=" + javaParameterDTOList + ",,,javaParameterDTO1=" + javaParameterDTO1);
+                                log.debug("javaParameterDTOList=" + javaParameterDTOList + ",,,javaParameterDTO1=" + javaParameterDTO1);
                             }
                             fieldType = InitConstant.getAbbreviation(fullyTypeName);
                             javaParameterDTO1.setType(fieldType);
@@ -283,7 +283,7 @@ public class BuildClassMethodParameteImpl {
     private static void javaParameterDTOSetJsonValue(List<JavaParameterDTO> javaParameterDTOS) {
         //对于一些自定义的参数，进行json赋值
         for (JavaParameterDTO parameterDTO : javaParameterDTOS) {
-            log.info("开始进行json赋值："+JSON.toJSONString(parameterDTO));
+            log.debug("开始进行json赋值："+JSON.toJSONString(parameterDTO));
             if(!parameterDTO.getCustomType()){
                 //非自定义的参数不进行赋值  - 后续再处理基础的类型等等
                 continue;
@@ -292,7 +292,7 @@ public class BuildClassMethodParameteImpl {
 
             //获取到配置
             JsonConfig jsonConfig = CommonConstant.CONFIG_ENTITY.getJsonConfig();
-            log.info("开始进行json赋值,获取到配置："+JSON.toJSONString(jsonConfig));
+            log.debug("开始进行json赋值,获取到配置："+JSON.toJSONString(jsonConfig));
             if(jsonConfig == null){
                 return;
             }
@@ -449,7 +449,7 @@ public class BuildClassMethodParameteImpl {
     private static void jsonValueSet(List<JavaParameterDTO> javaParameters, JsonConfigList jsonConfigList) {
         String value = jsonConfigList.getValue();
         JSONObject jsonObject = JSON.parseObject(value);
-        log.info("开始进行json赋值,jsonObject：" + jsonObject);
+        log.debug("开始进行json赋值,jsonObject：" + jsonObject);
 
         for (JavaParameterDTO javaParameter : javaParameters) {
             Object obj = jsonObject.get(javaParameter.getName());
@@ -460,7 +460,7 @@ public class BuildClassMethodParameteImpl {
             if ("String".equals(javaParameter.getType())) {
                 javaParameter.setValue("\"" + obj.toString() + "\"");
             }
-            log.info("设置的值为：" + javaParameter);
+            log.debug("设置的值为：" + javaParameter);
         }
     }
 

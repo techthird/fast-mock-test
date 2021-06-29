@@ -10,6 +10,7 @@ import com.thoughtworks.qdox.model.JavaClass;
 import fast.mock.test.core.constant.CommonConstant;
 import fast.mock.test.core.entity.ConfigEntity;
 import fast.mock.test.core.info.JavaClassInfo;
+import fast.mock.test.core.log.MySystemStreamLog;
 import fast.mock.test.core.util.PackageUtils;
 import fast.mock.test.core.util.StringUtils;
 import fast.mock.test.maven.plugin.base.AbstractPlugin;
@@ -35,7 +36,7 @@ import java.util.Map;
 @Mojo(name = "test")
 public class UnittestPlugin extends AbstractPlugin {
 
-    protected Log log = this.getLog();
+    private Log log = new MySystemStreamLog();
     /**
      * 需要测试的项目包名
      */
@@ -109,15 +110,15 @@ public class UnittestPlugin extends AbstractPlugin {
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         try {
+            long startTime = System.currentTimeMillis();
             //设置配置值
             super.execute();
 
             //初始化的一些操作
             init();
 
-            getLog().info("数据初始化后，开始生成自动化测试代码" +
-                    "\n开发者的配置数据：" + CommonConstant.CONFIG_ENTITY
-            );
+            log.info("开始生成自动化测试Case+Mock代码，请稍等片刻。");
+            log.debug("数据初始化后，开始生成自动化测试代码" + "\n开发者的配置数据：" + CommonConstant.CONFIG_ENTITY);
 
             //参数校验
             if (!paramCheck()) {
@@ -139,7 +140,7 @@ public class UnittestPlugin extends AbstractPlugin {
 
                 testPackageName = testPackageName.substring(0, testPackageName.lastIndexOf(".java"));
                 String classPathName = basedir + "/src/main/java/" + testPackageName.replace(".", "/") + ".java";
-                getLog().info("待生成单元测试类代码的类路径为："+classPathName);
+                log.info("待生成单元测试类代码的类路径为："+classPathName);
                 javaList.add(classPathName);
                 javaListMap.put(testPackageName.substring(0, testPackageName.lastIndexOf(".")), javaList);
             } else {
@@ -170,13 +171,13 @@ public class UnittestPlugin extends AbstractPlugin {
             for (String packageName : javaListMap.keySet()) {
                 //设置当前进行生成类的测试包名
                 List<String> javaList = javaListMap.get(packageName);
-                getLog().info("当前遍历的包名为：" + packageName );
+                log.info("当前遍历的包名为：" + packageName );
                 //class文件绝对路径
                 for (String javaNamePath : javaList) {
-                    getLog().info("当前java文件的绝对路径为：" + javaNamePath);
+                    log.info("当前java文件的绝对路径为：" + javaNamePath);
                     if (javaNamePath.endsWith("$1")) {
                         //跳过
-                        getLog().info("跳过内部类的生成:" + javaNamePath);
+                        log.info("跳过内部类的生成:" + javaNamePath);
                         continue;
                     }
                     //准备参数值
@@ -193,18 +194,22 @@ public class UnittestPlugin extends AbstractPlugin {
                     //生成测试类文件路径   被测试类的绝对路径
                     String testJavaName = CommonConstant.CONFIG_ENTITY.getBasedir() + CommonConstant.JAVA_TEST_SRC + javaClassInfo.getPackageName().replace(".", "/") + "/" + javaClassInfo.getTypeName() + CommonConstant.TEST_CLASS_SUFFIX + ".java";
                     javaClassInfo.setTestAbsolutePath(testJavaName);
+                    javaClassInfo.setMockAbsolutePath(CommonConstant.CONFIG_ENTITY.getBasedir() + CommonConstant.JAVA_TEST_SRC + javaClassInfo.getPackageName().replace(".", "/") + "/" + javaClassInfo.getTypeName()+CommonConstant.MOCK_CLASS_SUFFIX + ".java");
 
                     if (null != typeName) {
                         javaClassInfo.setFullyTypeName(javaClassInfo.getPackageName() + "." + typeName);
                         javaClassInfo.setTestAbsolutePath(CommonConstant.CONFIG_ENTITY.getBasedir() + CommonConstant.JAVA_TEST_SRC + javaClassInfo.getPackageName().replace(".", "/") + "/" + typeName+CommonConstant.TEST_CLASS_SUFFIX + ".java");
+                        javaClassInfo.setMockAbsolutePath(CommonConstant.CONFIG_ENTITY.getBasedir() + CommonConstant.JAVA_TEST_SRC + javaClassInfo.getPackageName().replace(".", "/") + "/" + typeName+CommonConstant.MOCK_CLASS_SUFFIX + ".java");
                         javaClassInfo.setTypeName(typeName);
                     }
-                    getLog().info("生成的类信息javaClassInfo：" + JSON.toJSONString(javaClassInfo));
+                    log.debug("生成的类信息javaClassInfo：" + JSON.toJSONString(javaClassInfo));
 
                     //核心
                     GenJava.genTest(javaClassInfo);
                 }
             }
+            double timeout = (System.currentTimeMillis()-startTime)/1000D;
+            log.info("成功生成自动化测试Case+Mock代码！耗时："+ timeout +"秒");
         } finally {
             //最终的一些操作
             DownFile.removeTemplateFile();
@@ -216,8 +221,8 @@ public class UnittestPlugin extends AbstractPlugin {
      */
     private void init() {
         if (testPackageName == null) {
-            //String str = "{\"basedir\":\"D:\\\\Workspaces\\\\YunjiProjects\\\\Other\\\\primo\\\\primo-generator-mock-test\\\\primo-generator-mock-test-demo\",\"configFileName\":\"fast-mock.ftl\",\"configPath\":\"/src/main/resources/test/template/\\\\\",\"isDownloadJsonFile\":true,\"isDownloadTemplateFile\":true,\"isGetChildPackage\":true,\"isMockThisOtherMethod\":true,\"isSetBasicTypesRandomValue\":false,\"jsonConfigFileName\":\"fast-mock.json\",\"jsonConfigPath\":\"/src/main/resources/test/template/\\\\\",\"project\":\"primo-generator-mock-test-demo\",\"setBooleanRandomRange\":\"true,false\",\"setIntRandomRange\":\"0,1000\",\"setLongRandomRange\":\"0,10000\",\"setStringRandomRange\":\"10\",\"target\":\"D:\\\\Workspaces\\\\YunjiProjects\\\\Other\\\\primo\\\\primo-generator-mock-test\\\\primo-generator-mock-test-demo\\\\target\",\"testPackageName\":\"fast.mock.test.demo.service.impl2.MyServiceImpl222.java\"}";
-            String str = "{\"basedir\":\"D:\\\\Workspaces\\\\YunjiProjects\\\\Other\\\\fast-mock-test\\\\fast-mock-test-demo\",\"configFileName\":\"fast-mock.ftl\",\"configPath\":\"/src/main/resources/test/template/\\\\\",\"isDownloadJsonFile\":false,\"isDownloadTemplateFile\":false,\"isGetChildPackage\":true,\"isMockThisOtherMethod\":true,\"isSetBasicTypesRandomValue\":false,\"jsonConfigFileName\":\"fast-mock.json\",\"jsonConfigPath\":\"/src/main/resources/test/template/\\\\\",\"project\":\"fast-mock-test-demo\",\"setBooleanRandomRange\":\"true,false\",\"setIntRandomRange\":\"0,1000\",\"setLongRandomRange\":\"0,10000\",\"setStringRandomRange\":\"10\",\"target\":\"D:\\\\Workspaces\\\\YunjiProjects\\\\Other\\\\fast-mock-test\\\\fast-mock-test-demo\\\\target\",\"testPackageName\":\"fast.mock.test.demo.service.impl2\"}";
+            //String str = "{\"basedir\":\"D:\\\\Workspaces\\\\YunjiProjects\\\\Other\\\\primo\\\\primo-generator-mock-test\\\\primo-generator-mock-test-demo\",\"configFileName\":\"fast-test.ftl\",\"configPath\":\"/src/main/resources/test/template/\\\\\",\"isDownloadJsonFile\":true,\"isDownloadTemplateFile\":true,\"isGetChildPackage\":true,\"isMockThisOtherMethod\":true,\"isSetBasicTypesRandomValue\":false,\"jsonConfigFileName\":\"fast-mock.json\",\"jsonConfigPath\":\"/src/main/resources/test/template/\\\\\",\"project\":\"primo-generator-mock-test-demo\",\"setBooleanRandomRange\":\"true,false\",\"setIntRandomRange\":\"0,1000\",\"setLongRandomRange\":\"0,10000\",\"setStringRandomRange\":\"10\",\"target\":\"D:\\\\Workspaces\\\\YunjiProjects\\\\Other\\\\primo\\\\primo-generator-mock-test\\\\primo-generator-mock-test-demo\\\\target\",\"testPackageName\":\"fast.mock.test.demo.service.impl2.MyServiceImpl222.java\"}";
+            String str = "{\"basedir\":\"D:\\\\Workspaces\\\\YunjiProjects\\\\Other\\\\fast-mock-test\\\\fast-mock-test-demo\",\"configFileName\":\"fast-test.ftl\",\"configPath\":\"/src/main/resources/test/template/\\\\\",\"isDownloadJsonFile\":false,\"isDownloadTemplateFile\":false,\"isGetChildPackage\":true,\"isMockThisOtherMethod\":true,\"isSetBasicTypesRandomValue\":false,\"jsonConfigFileName\":\"fast-mock.json\",\"jsonConfigPath\":\"/src/main/resources/test/template/\\\\\",\"project\":\"fast-mock-test-demo\",\"setBooleanRandomRange\":\"true,false\",\"setIntRandomRange\":\"0,1000\",\"setLongRandomRange\":\"0,10000\",\"setStringRandomRange\":\"10\",\"target\":\"D:\\\\Workspaces\\\\YunjiProjects\\\\Other\\\\fast-mock-test\\\\fast-mock-test-demo\\\\target\",\"testPackageName\":\"fast.mock.test.demo.service.impl2\"}";
             ConfigEntity obj = JSON.parseObject(str, ConfigEntity.class);
             testPackageName=obj.getTestPackageName();
             author=obj.getAuthor();
@@ -239,7 +244,7 @@ public class UnittestPlugin extends AbstractPlugin {
         CommonConstant.CONFIG_ENTITY.setSetIntRandomRange(setIntRandomRange);
         CommonConstant.CONFIG_ENTITY.setSetLongRandomRange(setLongRandomRange);
 
-        //getLog().info("222222----"+ JSON.toJSONString(CommonConstant.CONFIG_ENTITY));
+        log.debug("init params："+ JSON.toJSONString(CommonConstant.CONFIG_ENTITY));
 
         //初始化json文件
         DownFile.downJsonFile();
@@ -271,7 +276,7 @@ public class UnittestPlugin extends AbstractPlugin {
         //读取包下所有的java类文件
         String mainJava = basedir.getPath() + CommonConstant.JAVA_MAIN_SRC;
         CommonConstant.javaProjectBuilder.addSourceTree(new File(mainJava));
-        getLog().info("加载当前模块的类：" + mainJava);
+        log.debug("加载当前模块的类：" + mainJava);
         //读取包下所有的测试的java类文件
         String testJava = basedir.getPath() + CommonConstant.JAVA_TEST_SRC;
         try {
@@ -279,7 +284,7 @@ public class UnittestPlugin extends AbstractPlugin {
         } catch (Exception e) {
             log.error("读取包下所有的测试的java类文件 异常" + e.getMessage());
         }
-        getLog().info("加载当前模块的测试类：" + testJava);
+        log.debug("加载当前模块的测试类：" + testJava);
 
         //加载其他依赖的类 获取类加载器中的类
         ClassLoader loader = Thread.currentThread().getContextClassLoader();

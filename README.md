@@ -11,7 +11,7 @@ PS：团队前期没有单测的沉淀，可以先从整个接口的集成测试
 * **快速生成测试类**： 生成一个包含设置Case名称、组装测试接口的参数、调用方法、断言的测试模板。
 * **自动识别生成Mock方法**：根据测试接口自动识别需要Mock的方法，并且进行代码生成。
 * **自动构造入参、出参实体**：根据入参、出参对象，自动进行数据构造。简单理解就是实例化对象，并进行set操作。
-* **支持同时Mock、查询数据库、Redis，RPC请求**：灵活切换。
+* **灵活切换**：支持同时Mock、查询数据库、Redis，RPC请求。
 
 
 ## 使用  
@@ -40,7 +40,7 @@ PS：团队前期没有单测的沉淀，可以先从整个接口的集成测试
     <plugin>
         <groupId>fast-mock-test</groupId>
         <artifactId>fast-mock-maven-plugin</artifactId>
-        <version>1.0.1</version>
+        <version>1.0.3</version>
         <configuration>
             <!-- 待测试类的包名com.test.demo.service.provider，或者测试指定类文件xxxx.java） -->
             <testPackageName>com.test.demo.service.provider.ItemReadServiceImpl.java</testPackageName>
@@ -71,6 +71,17 @@ mvn fast-mock:test
 ![image](https://user-images.githubusercontent.com/20860404/120413784-825dfc00-c38b-11eb-96eb-20f0abda2d66.png)
 ![image](https://user-images.githubusercontent.com/20860404/121116700-88e7ea00-c849-11eb-908f-83dce6c263b1.png)
 
+### 4、小提示
+* 重复生成：一个被测类重复生成，为了防止代码的覆盖，将采用方法对比后进行追加处理。将始终一个Test类、一个Mock类。
+* 尽量保证生成的测试、Mock方法唯一，对同名不同参数的方法支持不太友好。
+* BaseTestCase类的说明：该类定义了启动Spring应用程序所需的配置。默认配置如下：
+```
+@RunWith(SpringJUnit4ClassRunner.class)
+@SpringBootTest
+public class BaseTestCase {
+
+}
+```
 
 ## 感谢
 1、一个堪称指哪打哪的Mock框架 [https://github.com/alibaba/testable-mock]  

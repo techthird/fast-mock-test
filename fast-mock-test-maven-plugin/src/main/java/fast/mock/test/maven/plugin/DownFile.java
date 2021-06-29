@@ -10,11 +10,12 @@ import fast.mock.test.core.util.FileUtils;
 import fast.mock.test.core.util.UUIDUtils;
 import fast.mock.test.core.json.JsonConfig;
 import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.plugin.logging.SystemStreamLog;
+import fast.mock.test.core.log.MySystemStreamLog;
 import org.springframework.core.io.ClassPathResource;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.Arrays;
 
 /**
  * 初始化配置文件
@@ -24,9 +25,10 @@ import java.io.InputStream;
  */
 public class DownFile {
 
-    private static Log log = new SystemStreamLog();
+    private static Log log = new MySystemStreamLog();
 
     private static String tmpFtlFileName = "fast-test-" + UUIDUtils.getID() + ".ftl";
+    private static String tmpMockFtlFileName = "fast-mock-" + UUIDUtils.getID() + ".ftl";
     /**
      * 下载模板文件
      */
@@ -34,13 +36,15 @@ public class DownFile {
         if (!CommonConstant.CONFIG_ENTITY.getIsDownloadTemplateFile()) {
             CommonConstant.CONFIG_ENTITY.setConfigPath("");
             CommonConstant.CONFIG_ENTITY.setConfigFileName(tmpFtlFileName);
+            CommonConstant.CONFIG_ENTITY.setMockConfigFileName(tmpMockFtlFileName);
         }
 
         // 下载文件到本地
         String configPath = CommonConstant.CONFIG_ENTITY.getConfigPath();
         String path = CommonConstant.CONFIG_ENTITY.getBasedir().getPath() + configPath;
         try {
-            FileUtils.downLoadFile(CommonConstant.CONFIG_ENTITY.getConfigFileName(), path, "fast-mock.ftl");
+            FileUtils.downLoadFile(CommonConstant.CONFIG_ENTITY.getConfigFileName(), path, "fast-test.ftl");
+            FileUtils.downLoadFile(CommonConstant.CONFIG_ENTITY.getMockConfigFileName(), path, "fast-mock.ftl");
         } catch (Exception e) {
             log.error("下载配置文件出现异常", e);
         }
@@ -49,15 +53,18 @@ public class DownFile {
         if (!CommonConstant.CONFIG_ENTITY.getIsDownloadTemplateFile()) {
             String configPath = CommonConstant.CONFIG_ENTITY.getConfigPath();
             String path = CommonConstant.CONFIG_ENTITY.getBasedir().getPath() + configPath;
-            File file = new File(path + File.separator + CommonConstant.CONFIG_ENTITY.getConfigFileName());
-            if (file.exists()) {
-                boolean delete = file.delete();
-                if(!delete){
-                    log.error("删除临时配置文件失败，路径：" + file.getPath() + ",文件名：" + file.getName());
-                }else{
-                    log.info("删除临时配置文件成功，路径：" + file.getPath() + ",文件名：" + file.getName());
+            File testFile = new File(path + File.separator + CommonConstant.CONFIG_ENTITY.getConfigFileName());
+            File mockfile = new File(path + File.separator + CommonConstant.CONFIG_ENTITY.getMockConfigFileName());
+            Arrays.asList(testFile, mockfile).stream().iterator().forEachRemaining(file -> {
+                if (file.exists()) {
+                    boolean delete = file.delete();
+                    if(!delete){
+                        log.error("删除临时配置文件失败，路径：" + file.getPath() + ",文件名：" + file.getName());
+                    }else{
+                        log.debug("删除临时配置文件成功，路径：" + file.getPath() + ",文件名：" + file.getName());
+                    }
                 }
-            }
+            });
         }
     }
 
@@ -84,7 +91,7 @@ public class DownFile {
                 //读取json配置到实体中
                 jsonStr = FileUtils.readFileToString(path + File.separator + CommonConstant.CONFIG_ENTITY.getJsonConfigFileName());
             }
-            log.info("读取的json配置文件内容为:" + jsonStr);
+            log.debug("读取的json配置文件内容为:" + jsonStr);
             JsonConfig jsonConfig = JSON.parseObject(jsonStr, JsonConfig.class);
             CommonConstant.CONFIG_ENTITY.setJsonConfig(jsonConfig);
         } catch (Exception e) {

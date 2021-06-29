@@ -15,7 +15,7 @@ import fast.mock.test.core.info.JavaClassInfo;
 import fast.mock.test.core.model.*;
 import fast.mock.test.core.util.CommonUtils;
 import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.plugin.logging.SystemStreamLog;
+import fast.mock.test.core.log.MySystemStreamLog;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
  */
 public class BuildMockClassMethodImpl {
 
-    private static Log log = new SystemStreamLog();
+    private static Log log = new MySystemStreamLog();
 
     /**
      * 构建mock的类方法信息
@@ -96,11 +96,11 @@ public class BuildMockClassMethodImpl {
         String methodName = null;
         try {
             String fieldName = name.split("\\.")[0];
-            log.info("获取的变量名称为:" + fieldName + ",全部名称为" + name.split("\\.")[0] + "." + name.split("\\.")[1] + ",匹配的数据为:" + str);
+            log.debug("获取的变量名称为:" + fieldName + ",全部名称为" + name.split("\\.")[0] + "." + name.split("\\.")[1] + ",匹配的数据为:" + str);
             if ("this".equals(fieldName)) {
                 //当前测试类 属性
                 fieldName = javaGenInfoModel.getModelNameLowerCamel();
-                log.info("获取的变量名称为:" + fieldName + ",进行设置属性变量：" + fieldName);
+                log.debug("获取的变量名称为:" + fieldName + ",进行设置属性变量：" + fieldName);
             }
             javaMockMethodInfoDTO.setFieldName(fieldName);
             //TODO 方法名称 - 这里实际还需要区分参数类型和参数个数，否则无法匹配到唯一的方法,目前不支持重名方法！！！
@@ -113,7 +113,7 @@ public class BuildMockClassMethodImpl {
             throw new RuntimeException(e);
         }
 
-        log.info("获取到Mock的方法：" + str + ",javaMockMethodInfoDTO=" + javaMockMethodInfoDTO);
+        log.debug("获取到Mock的方法：" + str + ",javaMockMethodInfoDTO=" + javaMockMethodInfoDTO);
 
         javaMockMethodInfoDTO.setName(methodName);
         javaMockMethodInfoDTO.setReturnMethodName(methodName);
@@ -307,7 +307,7 @@ public class BuildMockClassMethodImpl {
         javaGenInfoModel.getImplementsJavaPackageMap().put(javaMethodModel.getReturnType(), set);
 
 
-        log.info("mock方法的属性：" + javaMockMethodInfoDTO);
+        log.debug("mock方法的属性：" + javaMockMethodInfoDTO);
         javaMockMethodInfoDTOList.add(javaMockMethodInfoDTO);
     }
 

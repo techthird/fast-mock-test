@@ -29,6 +29,7 @@ public interface ITableShardingService extends IService<TableSharding> {
      * @return
      */
     TableSharding getOne(TableShardingQueryBo query);
+    long getOne(Integer a);
     TableSharding getOne2();
 
     /**

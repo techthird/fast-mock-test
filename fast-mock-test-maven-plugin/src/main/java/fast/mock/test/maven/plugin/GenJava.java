@@ -121,8 +121,8 @@ public class GenJava {
 
             Map<String, Object> data = new HashMap<>(2);
             data.put("javaClassDTO", javaClassDTO);
-            log.debug("javaClassDTO：");
-            log.debug(JSON.toJSONString(javaClassDTO));
+            log.info("javaClassDTO：");
+            log.info(JSON.toJSONString(javaClassDTO));
 
             //获取mock的类
             if (!fileIsExists) {

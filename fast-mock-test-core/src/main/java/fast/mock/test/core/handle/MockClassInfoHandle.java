@@ -20,6 +20,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.logging.Log;
 import fast.mock.test.core.log.MySystemStreamLog;
 
+import java.io.File;
 import java.util.*;
 
 /**
@@ -316,7 +317,11 @@ public class MockClassInfoHandle {
             javaMethodModel.setParentClassFullyType(superClass.getFullyQualifiedName());
         }
 
-        javaMethodModel.setGenericValue(javaMethod.getReturnType().getGenericValue());
+        String genericValue = javaMethod.getReturnType().getGenericValue();
+        if (!genericValue.contains("<") && genericValue.contains(".")) {
+            genericValue = genericValue.substring(genericValue.lastIndexOf(".") + 1, genericValue.length());
+        }
+        javaMethodModel.setGenericValue(genericValue);
         List<JavaGenericModel> javaGenericModelList = new ArrayList<>();
 
 
@@ -325,7 +330,6 @@ public class MockClassInfoHandle {
             JavaGenericModel javaGenericModel = new JavaGenericModel();
             List<ObjectModel> objectModelList = new ArrayList<>();
 
-            String genericValue = javaMethod.getReturnType().getGenericValue();
             Arrays.asList(genericFullyQualifiedName.split("<")).forEach(name -> {
                 name = name.replaceAll(">", "");
                 if (name.indexOf(",") != -1) {

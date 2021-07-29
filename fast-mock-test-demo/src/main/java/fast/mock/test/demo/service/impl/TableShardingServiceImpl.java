@@ -139,6 +139,9 @@ public class TableShardingServiceImpl extends ServiceImpl<TableShardingMapper, T
     public DataRO<List<User>> getDataRo2(UserTemplate userTemplate) {
         return null;
     }
+    public List<User> getMapDataRO2(List<User> map2) {
+        return null;
+    }
     public DataRO<Map<Boolean,User>> getMapDataRO(Map<String,User> map2) {
         DataRO<Map<Boolean,User>> dataRO = new DataRO<>();
         Map<Boolean, User> map = new HashMap<>(1);

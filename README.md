@@ -40,7 +40,7 @@ PS：团队前期没有单测的沉淀，可以先从整个接口的集成测试
     <plugin>
         <groupId>fast-mock-test</groupId>
         <artifactId>fast-mock-maven-plugin</artifactId>
-        <version>1.0.3</version>
+        <version>1.0.4-SNAPSHOT</version>
         <configuration>
             <!-- 待测试类的包名com.test.demo.service.provider，或者测试指定类文件xxxx.java） -->
             <testPackageName>com.test.demo.service.provider.ItemReadServiceImpl.java</testPackageName>

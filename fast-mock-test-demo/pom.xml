@@ -98,6 +98,12 @@
             <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
+        <!--库存服务-->
+        <dependency>
+            <groupId>yunji</groupId>
+            <artifactId>yunji-itemapi</artifactId>
+            <version>1.5.1-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
 
@@ -127,7 +133,7 @@
             <plugin>
                 <groupId>io.github.techthird</groupId>
                 <artifactId>fast-mock-maven-plugin</artifactId>
-                <version>1.0.3</version>
+                <version>1.0.4-SNAPSHOT</version>
                 <configuration>
                     <testPackageName>fast.mock.test.demo.service.impl2.MyServiceImpl.java</testPackageName>
                     <testMethods></testMethods>

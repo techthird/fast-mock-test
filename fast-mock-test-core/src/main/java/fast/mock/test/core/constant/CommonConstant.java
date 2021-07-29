@@ -7,6 +7,7 @@ package fast.mock.test.core.constant;
 import fast.mock.test.core.entity.ConfigEntity;
 import com.thoughtworks.qdox.JavaProjectBuilder;
 
+import java.net.URLClassLoader;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
@@ -48,6 +49,12 @@ public class CommonConstant {
      * 预加载类信息
      */
     public static JavaProjectBuilder javaProjectBuilder = new JavaProjectBuilder();
+
+    /**
+     * URL类加载器
+     */
+    public static URLClassLoader urlClassLoader = null;
+
     /**
      * 需要跳过的包的类，不进行设置默认值,默认值设置为null
      * 第三方类，无法进行加载的类需要该设置

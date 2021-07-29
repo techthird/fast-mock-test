@@ -1,7 +1,6 @@
 package fast.mock.test.demo;
 
 import fast.mock.test.demo.query.TableShardingQueryBo;
-import fast.mock.test.demo.service.impl2.MyServiceImpl;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,8 +13,6 @@ import javax.annotation.Resource;
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = FastMockTestDemoApplication.class)
 public class TestApplication extends AbstractJUnit4SpringContextTests {
-    @Resource
-    private MyServiceImpl myService;
 
 
     @BeforeClass
@@ -24,9 +21,5 @@ public class TestApplication extends AbstractJUnit4SpringContextTests {
         System.setProperty("config_env", "local");
     }
 
-    @Test
-    public void test1() {
-        myService.pageTestParent(new TableShardingQueryBo(), 0, 1);
-    }
 
 }

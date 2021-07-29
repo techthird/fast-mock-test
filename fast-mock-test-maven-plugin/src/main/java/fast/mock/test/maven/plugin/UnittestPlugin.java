@@ -14,18 +14,38 @@ import fast.mock.test.core.log.MySystemStreamLog;
 import fast.mock.test.core.util.PackageUtils;
 import fast.mock.test.core.util.StringUtils;
 import fast.mock.test.maven.plugin.base.AbstractPlugin;
+import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
+import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.DefaultProjectBuildingRequest;
+import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.ProjectBuildingRequest;
+import org.apache.maven.shared.artifact.filter.StrictPatternExcludesArtifactFilter;
+import org.apache.maven.shared.artifact.filter.StrictPatternIncludesArtifactFilter;
+import org.apache.maven.shared.dependency.graph.DependencyGraphBuilder;
+import org.apache.maven.shared.dependency.graph.DependencyNode;
+import org.apache.maven.shared.dependency.graph.filter.AncestorOrSelfDependencyNodeFilter;
+import org.apache.maven.shared.dependency.graph.filter.AndDependencyNodeFilter;
+import org.apache.maven.shared.dependency.graph.filter.ArtifactDependencyNodeFilter;
+import org.apache.maven.shared.dependency.graph.filter.DependencyNodeFilter;
+import org.apache.maven.shared.dependency.graph.traversal.*;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.*;
 
 /**
  * 构建自动化测试
@@ -91,6 +111,42 @@ public class UnittestPlugin extends AbstractPlugin {
     @Parameter(defaultValue = "true,false")
     private String setBooleanRandomRange;
 
+    @Parameter(defaultValue = "${project}", readonly = true, required = true)
+    private MavenProject mavenProject;
+
+    /**
+     * The Maven project.
+     */
+    @Parameter( defaultValue = "${project}", readonly = true, required = true )
+    private MavenProject project;
+
+    @Parameter( defaultValue = "${session}", readonly = true, required = true )
+    private MavenSession session;
+
+    @Parameter( property = "scope" )
+    private String scope;
+
+    /**
+     * The dependency tree builder to use.
+     */
+    @Component( hint = "default" )
+    private DependencyGraphBuilder dependencyGraphBuilder;
+    /**
+     * The computed dependency tree root node of the Maven project.
+     */
+    private DependencyNode rootNode;
+    /**
+     * Contains the full list of projects in the reactor.
+     */
+    @Parameter( defaultValue = "${reactorProjects}", readonly = true, required = true )
+    private List<MavenProject> reactorProjects;
+    @Parameter( property = "tokens", defaultValue = "standard" )
+    private String tokens;
+    @Parameter( property = "includes" )
+    private String includes;
+    @Parameter( property = "excludes" )
+    private String excludes;
+
 
 
     /*public static void main(String[] args) throws IOException, MojoFailureException, MojoExecutionException {
@@ -105,6 +161,126 @@ public class UnittestPlugin extends AbstractPlugin {
         JavaClass javaClass3 = builder.getClassByName("JavaProjectBuilder");
         JavaClass javaClass4 = builder.getClassByName("com.thoughtworks.qdox.JavaProjectBuilder");
         System.out.println(javaClass3 + "====" + javaClass4);
+    }
+
+    private ArtifactFilter createResolvingArtifactFilter()
+    {
+        ArtifactFilter filter;
+
+        // filter scope
+        if ( scope != null )
+        {
+            getLog().debug( "+ Resolving dependency tree for scope '" + scope + "'" );
+
+            filter = new ScopeArtifactFilter( scope );
+        }
+        else
+        {
+            filter = null;
+        }
+
+        return filter;
+    }
+
+    /**
+     * @param writer {@link Writer}
+     * @return {@link DependencyNodeVisitor}
+     */
+    public DependencyNodeVisitor getSerializingDependencyNodeVisitor( Writer writer )
+    {
+            return new SerializingDependencyNodeVisitor( writer, toGraphTokens( tokens ) );
+    }
+
+    /**
+     * Gets the graph tokens instance for the specified name.
+     *
+     * @param theTokens the graph tokens name
+     * @return the <code>GraphTokens</code> instance
+     */
+    private SerializingDependencyNodeVisitor.GraphTokens toGraphTokens(String theTokens )
+    {
+        SerializingDependencyNodeVisitor.GraphTokens graphTokens;
+
+        if ( "whitespace".equals( theTokens ) )
+        {
+            getLog().debug( "+ Using whitespace tree tokens" );
+
+            graphTokens = SerializingDependencyNodeVisitor.WHITESPACE_TOKENS;
+        }
+        else if ( "extended".equals( theTokens ) )
+        {
+            getLog().debug( "+ Using extended tree tokens" );
+
+            graphTokens = SerializingDependencyNodeVisitor.EXTENDED_TOKENS;
+        }
+        else
+        {
+            graphTokens = SerializingDependencyNodeVisitor.STANDARD_TOKENS;
+        }
+
+        return graphTokens;
+    }
+
+    private DependencyNodeFilter createDependencyNodeFilter()
+    {
+        List<DependencyNodeFilter> filters = new ArrayList<>();
+
+        // filter includes
+        if ( includes != null )
+        {
+            List<String> patterns = Arrays.asList( includes.split( "," ) );
+
+            getLog().debug( "+ Filtering dependency tree by artifact include patterns: " + patterns );
+
+            ArtifactFilter artifactFilter = new StrictPatternIncludesArtifactFilter( patterns );
+            filters.add( new ArtifactDependencyNodeFilter( artifactFilter ) );
+        }
+
+        // filter excludes
+        if ( excludes != null )
+        {
+            List<String> patterns = Arrays.asList( excludes.split( "," ) );
+
+            getLog().debug( "+ Filtering dependency tree by artifact exclude patterns: " + patterns );
+
+            ArtifactFilter artifactFilter = new StrictPatternExcludesArtifactFilter( patterns );
+            filters.add( new ArtifactDependencyNodeFilter( artifactFilter ) );
+        }
+
+        return filters.isEmpty() ? null : new AndDependencyNodeFilter( filters );
+    }
+
+    /**
+     * Serializes the specified dependency tree to a string.
+     *
+     * @param theRootNode the dependency tree root node to serialize
+     * @return the serialized dependency tree
+     */
+    private String serializeDependencyTree( DependencyNode theRootNode )
+    {
+        StringWriter writer = new StringWriter();
+
+        DependencyNodeVisitor visitor = getSerializingDependencyNodeVisitor( writer );
+
+        // TODO: remove the need for this when the serializer can calculate last nodes from visitor calls only
+        visitor = new BuildingDependencyNodeVisitor( visitor );
+
+        DependencyNodeFilter filter = createDependencyNodeFilter();
+
+        if ( filter != null )
+        {
+            CollectingDependencyNodeVisitor collectingVisitor = new CollectingDependencyNodeVisitor();
+            DependencyNodeVisitor firstPassVisitor = new FilteringDependencyNodeVisitor( collectingVisitor, filter );
+            theRootNode.accept( firstPassVisitor );
+
+            DependencyNodeFilter secondPassFilter =
+                    new AncestorOrSelfDependencyNodeFilter( collectingVisitor.getNodes() );
+            visitor = new FilteringDependencyNodeVisitor( visitor, secondPassFilter );
+        }
+
+        theRootNode.accept( visitor );
+
+        return writer.toString();
     }
 
     @Override
@@ -269,9 +445,9 @@ public class UnittestPlugin extends AbstractPlugin {
         return true;
     }
 
-    /**
+   /* *//**
      * 初始化类源
-     */
+     *//*
     private void initJavaProjectBuilder() {
         //读取包下所有的java类文件
         String mainJava = basedir.getPath() + CommonConstant.JAVA_MAIN_SRC;
@@ -291,6 +467,115 @@ public class UnittestPlugin extends AbstractPlugin {
         if(loader!=null) {
             CommonConstant.javaProjectBuilder.addClassLoader(loader);
         }
+
+    }
+*/
+    /**
+     * 初始化类源
+     */
+    private void initJavaProjectBuilder() {
+        try {
+            String mainJava = basedir.getPath() + CommonConstant.JAVA_MAIN_SRC;
+            log.info("加载当前模块的类：" + mainJava);
+            CommonConstant.javaProjectBuilder.addSourceTree(new File(mainJava));
+        } catch (Exception e) {
+            log.error("读取包下所有的java类文件 异常" + e.getMessage());
+        }
+        try {
+            String testJava = basedir.getPath() + CommonConstant.JAVA_TEST_SRC;
+            log.info("加载当前模块的测试类：" + testJava);
+            CommonConstant.javaProjectBuilder.addSourceTree(new File(testJava));
+        } catch (Exception e) {
+            log.error("读取包下所有的测试的java类文件 异常" + e.getMessage());
+        }
+        try {
+            ClassLoader cl = ClassLoader.getSystemClassLoader();
+            URL[] urls = ((URLClassLoader) cl).getURLs();
+
+            URL[] packageUrls = getPackageUrls();
+            CommonConstant.urlClassLoader = new URLClassLoader(packageUrls, Thread.currentThread().getContextClassLoader());
+            if (CommonConstant.urlClassLoader != null) {
+                CommonConstant.javaProjectBuilder.addClassLoader(CommonConstant.urlClassLoader);
+            }
+        } catch (Exception e) {
+            log.error("类加载异常", e);
+        }
+    }
+
+    private URL[] getPackageUrls() throws MojoExecutionException {
+        List<URL> runtimeUrls = new ArrayList<>();
+       /* try {
+            List compileClasspathElements = mavenProject.getCompileClasspathElements();
+            runtimeUrls = new URL[compileClasspathElements.size()+2];
+            for (int i = 0; i < compileClasspathElements.size(); i++) {
+                String element = (String) compileClasspathElements.get(i);
+                runtimeUrls[i] = new File(element).toURI().toURL();
+            }
+            URL url1 = new File("D:/repository/yunji/yunji-itemapi/1.5.1-SNAPSHOT/yunji-itemapi-1.5.1-20200401.071902-20.jar").toURI().toURL();
+            URL url2 = new File("D:/repository/yunji/yunji-itementity/2.1.4-SNAPSHOT/yunji-itementity-2.1.4-20210609.024850-3.jar").toURI().toURL();
+            runtimeUrls[compileClasspathElements.size()] = url1;
+            runtimeUrls[compileClasspathElements.size()+1] = url2;
+        } catch (Exception e) {
+            log.error("getPackageUrls error" + e.getMessage());
+        }*/
+        try
+        {
+            String dependencyTreeString;
+
+            // TODO: note that filter does not get applied due to MSHARED-4
+            ArtifactFilter artifactFilter = createResolvingArtifactFilter();
+
+            ProjectBuildingRequest buildingRequest =
+                    new DefaultProjectBuildingRequest( session.getProjectBuildingRequest() );
+
+            buildingRequest.setProject( project );
+
+            // non-verbose mode use dependency graph component, which gives consistent results with Maven version
+            // running
+            rootNode = dependencyGraphBuilder.buildDependencyGraph( buildingRequest, artifactFilter,
+                    reactorProjects );
+
+            recursionAddUrl(runtimeUrls, rootNode.getChildren());
+
+            System.out.println("");
+            //dependencyTreeString = serializeDependencyTree( rootNode );
+
+        }
+        catch ( Exception exception ){
+            throw new MojoExecutionException( "Cannot build project dependency graph", exception );
+        }
+
+
+        return runtimeUrls.toArray(new URL[runtimeUrls.size()]);
+    }
+
+    private void recursionAddUrl(List<URL> runtimeUrls, List<DependencyNode> children) throws MalformedURLException {
+        for (DependencyNode childTmp : children) {
+            URL url = childTmp.getArtifact().getFile().toURI().toURL();
+            runtimeUrls.add(url);
+            recursionAddUrl(runtimeUrls, childTmp.getChildren());
+        }
+    }
+
+    public static void main(String[] args) throws IOException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+
+        URLClassLoader loader1 = (URLClassLoader) ClassLoader.getSystemClassLoader();
+        URL[] urLs = loader1.getURLs();
+        for (URL urL : urLs) {             System.out.println(urL.toString());         }
+
+        Method add = URLClassLoader.class.getDeclaredMethod("addURL", new Class[] { URL.class });
+        add.setAccessible(true);
+        add.invoke(loader1, new URL("file://D:/Workspaces/DevTools/maven-store/yunji/yunji-itemapi/1.5.1-SNAPSHOT/yunji-itemapi-1.5.1-SNAPSHOT.jar"));
+        CommonConstant.javaProjectBuilder.addClassLoader(loader1);
+        CommonConstant.javaProjectBuilder.addSourceTree(new File("D:/Workspaces/DevTools/maven-store/yunji/yunji-itemapi/1.5.1-SNAPSHOT"));
+        JavaClass classByName = CommonConstant.javaProjectBuilder.getClassByName("com.yunji.item.api.IItemService");
+        System.out.println(classByName.getMethods().size());
+
+
+        URL[] packageUrls = new URL[]{new URL("file://D:/Workspaces/DevTools/maven-store/yunji/yunji-itemapi/1.5.1-SNAPSHOT/yunji-itemapi-1.5.1-SNAPSHOT.jar")};
+        URLClassLoader classLoader = new URLClassLoader(packageUrls, UnittestPlugin.class.getClassLoader());
+        classLoader.loadClass("com.yunji.item.api.IItemService");
+        System.out.println("");
     }
 
 

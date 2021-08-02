@@ -51,17 +51,7 @@ public class ${javaClassDTO.modelNameUpperCamelTestClass} /*extends BaseTestCase
         <#--获取内部参数-->
             <#if parameter.isInterface>
             <#--参数是接口-->
-        ${parameter.type} ${parameter.name} =
-                <#if parameter.value??>
-                    ${parameter.value}
-                <#else >
-                <#--判断是否能够使用简称-->
-                    <#if parameter.subClassCanUserType>
-                new ${parameter.subClassType}();
-                    <#else >
-                new ${parameter.subClassFullyType}();
-                    </#if>
-                </#if>
+        ${parameter.type} ${parameter.name} = <#if parameter.value??> ${parameter.value} <#else > <#--判断是否能够使用简称--> <#if parameter.subClassCanUserType> new ${parameter.subClassType}(); <#else > new ${parameter.subClassFullyType}(); </#if> </#if>
             <#else >
         ${parameter.type} ${parameter.name} = <#if parameter.value??>${parameter.value}<#else >new ${parameter.type}()</#if>;
             </#if>
@@ -74,17 +64,7 @@ public class ${javaClassDTO.modelNameUpperCamelTestClass} /*extends BaseTestCase
         <#--获取内部参数-->
             <#if parameter.isInterface>
             <#--参数是接口-->
-        ${parameter.type} ${parameter.name} =
-                <#if parameter.value??>
-                    ${parameter.value}
-                <#else >
-                <#--判断是否能够使用简称-->
-                    <#if parameter.subClassCanUserType>
-                new ${parameter.subClassType}();
-                    <#else >
-                new ${parameter.subClassFullyType}();
-                    </#if>
-                </#if>
+        ${parameter.type} ${parameter.name} = <#if parameter.value??>${parameter.value} <#else ><#--判断是否能够使用简称--><#if parameter.subClassCanUserType>new ${parameter.subClassType}(); <#else >new ${parameter.subClassFullyType}();</#if> </#if>
             <#else >
         ${parameter.type} ${parameter.name} = <#if parameter.value??>${parameter.value}<#else >new ${parameter.type}()</#if>;
             </#if>

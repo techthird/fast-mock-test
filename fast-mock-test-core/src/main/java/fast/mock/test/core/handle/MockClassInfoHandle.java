@@ -21,6 +21,7 @@ import org.apache.maven.plugin.logging.Log;
 import fast.mock.test.core.log.MySystemStreamLog;
 
 import java.io.File;
+import java.lang.reflect.Method;
 import java.util.*;
 
 /**
@@ -316,16 +317,17 @@ public class MockClassInfoHandle {
             //设置父类类型
             javaMethodModel.setParentClassFullyType(superClass.getFullyQualifiedName());
         }
-
-        String genericValue = javaMethod.getReturnType().getGenericValue();
-        if (!genericValue.contains("<") && genericValue.contains(".")) {
-            genericValue = genericValue.substring(genericValue.lastIndexOf(".") + 1, genericValue.length());
+        String genericValue, genericFullyQualifiedName;
+        try {
+            Method  method = CommonConstant.getJavaMethod(classType, javaMethod);
+            genericValue = CommonUtils.simplify(method.getGenericReturnType().getTypeName());
+            genericFullyQualifiedName = method.getGenericReturnType().getTypeName();
+        } catch (ClassNotFoundException e) {
+            genericValue = javaMethod.getReturnType().getGenericValue();
+            genericFullyQualifiedName = javaMethod.getReturnType().getGenericFullyQualifiedName();
         }
-        javaMethodModel.setGenericValue(genericValue);
-        List<JavaGenericModel> javaGenericModelList = new ArrayList<>();
 
-
-        String genericFullyQualifiedName = javaMethod.getReturnType().getGenericFullyQualifiedName();
+        javaMethodModel.setGenericValue(CommonUtils.simplify(genericValue));
         if (StringUtils.isNotBlank(genericFullyQualifiedName) && !CommonUtils.isJavaDataType(javaMethodModel.getGenericValue())) {
             JavaGenericModel javaGenericModel = new JavaGenericModel();
             List<ObjectModel> objectModelList = new ArrayList<>();

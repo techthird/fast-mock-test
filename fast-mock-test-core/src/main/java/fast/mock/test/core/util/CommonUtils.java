@@ -47,4 +47,38 @@ public class CommonUtils {
         System.out.println(millis);
         System.out.println(millis.substring(millis.length()-6,millis.length()));
     }
+
+    /**
+     * 简化报名
+     * java.util.List<java.util.Map<java.lang.String,com.wy.group.GoodsBo>>
+     *     转换为List<Map<String,GoodsBo>>
+     * @param str
+     * @return
+     */
+    public static String simplify(String str) {
+        if (!str.contains("<") && str.contains(".")) {
+            return str.substring(str.lastIndexOf(".") + 1, str.length());
+        } else if (!str.contains("<") && !str.contains(".")) {
+            return str;
+        }
+
+        String[] genericArr  = str.split("");
+        StringBuffer result = new StringBuffer();
+        StringBuffer tmp = new StringBuffer();
+        for (String generic : genericArr) {
+            tmp.append(generic);
+            if (generic.equals(".")) {
+                tmp = new StringBuffer();
+                continue;
+            }
+            if (("<").equals(generic) ||
+                    ",".equals(generic) ||
+                    ">".equals(generic)) {
+                result.append(tmp);
+                tmp = new StringBuffer();
+                continue;
+            }
+        }
+        return result.toString();
+    }
 }

@@ -4,14 +4,15 @@
  */
 package fast.mock.test.core.constant;
 
+import com.thoughtworks.qdox.model.JavaMethod;
+import com.thoughtworks.qdox.model.JavaParameter;
 import fast.mock.test.core.entity.ConfigEntity;
 import com.thoughtworks.qdox.JavaProjectBuilder;
 
+import java.lang.reflect.Method;
 import java.net.URLClassLoader;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author chenhx
@@ -56,11 +57,36 @@ public class CommonConstant {
     public static URLClassLoader urlClassLoader = null;
 
     /**
+     * JavaClassMethod map
+     * key:类名 key:方法+参数
+     */
+    public static Map<String, Map<String,Method>> javaClassMap = new HashMap<>();
+
+    /**
      * 需要跳过的包的类，不进行设置默认值,默认值设置为null
      * 第三方类，无法进行加载的类需要该设置
      * 1.0.0+ 删除
      */
     @Deprecated
     public static Set<String> skipPackage = new HashSet<>();
+
+    public static Method getJavaMethod(String className, JavaMethod javaMethod) throws ClassNotFoundException {
+        StringBuffer parameterType = new StringBuffer();
+        javaMethod.getParameters().forEach(parameter -> { parameterType.append(parameter.getCanonicalName()); });
+
+        String keyMethod = javaMethod.getName() + parameterType.toString();
+        Map<String, Method> methodMap = javaClassMap.get(className);
+        if (methodMap == null) {
+            methodMap = new HashMap<>();
+            Method[] declaredMethods = CommonConstant.urlClassLoader.loadClass(className).getDeclaredMethods();
+            for (Method declaredMethod : declaredMethods) {
+                StringBuffer parameterTypeTmp = new StringBuffer();
+                Arrays.stream(declaredMethod.getParameters()).forEach(parameter -> { parameterTypeTmp.append(parameter.getType().getName()); });
+                methodMap.put(declaredMethod.getName() + parameterTypeTmp.toString(), declaredMethod);
+            }
+            javaClassMap.put(className, methodMap);
+        }
+        return javaClassMap.get(className).get(keyMethod);
+    }
 
 }

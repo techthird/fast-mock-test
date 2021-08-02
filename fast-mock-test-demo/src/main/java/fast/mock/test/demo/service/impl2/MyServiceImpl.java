@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.yunji.item.api.IItemService;
 import fast.mock.test.demo.entity.TableSharding;
 import fast.mock.test.demo.entity.User;
 import fast.mock.test.demo.mapper.TableShardingMapper;
@@ -31,12 +30,40 @@ import java.util.List;
 public class MyServiceImpl {
 
     @Autowired
-    private IItemService itemService;
+    private IUserService userService;
+    @Autowired
+    private TableShardingServiceImpl tableShardingService;
+    @Autowired
+    private TableShardingMapper tableShardingMapper;
 
-    public List<User> selectBenchItemStock2(List<Integer> itemIds) {
-        itemService.assembleSimpleShopItemBoListForApp(null, 1);
-        return null;
+    /**
+     * 按照条件分页查询
+     * @param query
+     */
+    public IPage<UserQueryBo> pageTestParent(TableShardingQueryBo query, int pageNo, int pageSize){
+        if(query==null){
+            return new Page<>();
+        }
+        QueryWrapper<TableSharding> queryWrapper = query.buildQuery();
+        UserQueryBo userQueryBo1 = new UserQueryBo();
+        userQueryBo1.setId(10000);
+        userQueryBo1.setEmail("test222@qq.com");
+        userQueryBo1.setName("fdaf222222222222d打发第三方");
+
+        QueryWrapper<TableSharding> qw = new QueryWrapper<>();
+        userService.getUser(null);
+        userService.listUser(null);
+        tableShardingService.getListMap1(1);
+
+        UserQueryBo userQueryBo = new UserQueryBo();
+        userQueryBo.setEmail("fjdljf@qq.com");
+        userQueryBo.setId(12000);
+
+        Page<UserQueryBo> objectPage = new Page<>();
+        objectPage.addOrder(new OrderItem().setColumn("测试Column"));
+        return objectPage;
     }
+
 
 
 

@@ -317,12 +317,12 @@ public class MockClassInfoHandle {
             //设置父类类型
             javaMethodModel.setParentClassFullyType(superClass.getFullyQualifiedName());
         }
-        String genericValue, genericFullyQualifiedName;
+        String genericValue = "", genericFullyQualifiedName = "";
         try {
             Method  method = CommonConstant.getJavaMethod(classType, javaMethod);
             genericValue = CommonUtils.simplify(method.getGenericReturnType().getTypeName());
             genericFullyQualifiedName = method.getGenericReturnType().getTypeName();
-        } catch (ClassNotFoundException e) {
+        } catch (Exception e){
             genericValue = javaMethod.getReturnType().getGenericValue();
             genericFullyQualifiedName = javaMethod.getReturnType().getGenericFullyQualifiedName();
         }

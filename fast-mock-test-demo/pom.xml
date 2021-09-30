@@ -46,11 +46,6 @@
             <artifactId>fastjson</artifactId>
             <version>1.2.7</version>
         </dependency>
-        <dependency>
-            <groupId>venus</groupId>
-            <artifactId>venus-frameworkapi</artifactId>
-            <version>1.0.5-SNAPSHOT</version>
-        </dependency>
 
         <!--Spring Boot web依赖-->
         <dependency>
@@ -132,7 +127,7 @@
             <plugin>
                 <groupId>io.github.techthird</groupId>
                 <artifactId>fast-mock-maven-plugin</artifactId>
-                <version>1.0.4-SNAPSHOT</version>
+                <version>1.0.5</version>
                 <configuration>
                     <testPackageName>fast.mock.test.demo.service.impl2.MyServiceImpl.java</testPackageName>
                     <testMethods></testMethods>

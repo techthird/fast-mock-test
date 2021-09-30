@@ -28,6 +28,12 @@ PS：团队前期没有单测的沉淀，可以先从整个接口的集成测试
     <scope>test</scope>
 </dependency>
 <dependency>
+    <groupId>org.mockito</groupId>
+    <artifactId>mockito-core</artifactId>
+    <version>2.8.47</version>
+    <scope>test</scope>
+</dependency>
+<dependency>
     <groupId>com.alibaba.testable</groupId>
     <artifactId>testable-all</artifactId>
     <version>${testable.version}</version>
@@ -40,7 +46,7 @@ PS：团队前期没有单测的沉淀，可以先从整个接口的集成测试
     <plugin>
         <groupId>fast-mock-test</groupId>
         <artifactId>fast-mock-maven-plugin</artifactId>
-        <version>1.0.4</version>
+        <version>1.0.5</version>
         <configuration>
             <!-- 待测试类的包名com.test.demo.service.provider，或者测试指定类文件xxxx.java） -->
             <testPackageName>com.test.demo.service.provider.ItemReadServiceImpl.java</testPackageName>
@@ -82,6 +88,10 @@ public class BaseTestCase {
 
 }
 ```
+
+## 问题反馈
+目前项目处于初始阶段，Bug肯定是无法避免的，团队试用下来，不是特别偏门的接口，都能成功生成。  
+如果您感兴趣或者有问题可加微信guiyong_chen沟通交流。 备注：fast-mock
 
 ## 感谢
 1、一个堪称指哪打哪的Mock框架 [https://github.com/alibaba/testable-mock]  

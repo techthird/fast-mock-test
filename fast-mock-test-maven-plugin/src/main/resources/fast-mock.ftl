@@ -64,6 +64,9 @@ public class ${javaClassDTO.modelNameUpperCamelMockClass}  {
             <#elseif mockMethInfo.genericValue?contains(">>") && mockMethInfo.genericValue?contains("List") && mockMethInfo.genericValue?contains("Map")>
             <#--List<Map<Boolean,User>> dataRO = new ArrayList<>(1);-->
         List<Map<${mockMethInfo.javaGenericModel.objectModelList[2].objectName},${mockMethInfo.javaGenericModel.objectModelList[3].objectName}>> mapList = new ArrayList<>(1);
+            <#elseif mockMethInfo.genericValue?contains("List") && mockMethInfo.genericValue?contains(">") && mockMethInfo.javaGenericModel.isBaseDataType>
+            <#--List<Integer> dataRO = new ArrayList<>(1);-->
+        ${mockMethInfo.genericValue} objList = new ArrayList<>();
             <#elseif mockMethInfo.genericValue?contains("List") && mockMethInfo.genericValue?contains(">")>
             <#--List<User> dataRO = new ArrayList<>(1);-->
         ${mockMethInfo.genericValue} objList = new ArrayList<>();
@@ -87,10 +90,12 @@ public class ${javaClassDTO.modelNameUpperCamelMockClass}  {
             Map<${mockMethInfo.javaGenericModel.objectModelList[3].objectName}, ${mockMethInfo.javaGenericModel.objectModelList[4].objectName}> map = new HashMap<>(1);
             <#assign objName ="${mockMethInfo.javaGenericModel.objectModelList[4].objectName?uncap_first}">
             ${mockMethInfo.javaGenericModel.objectModelList[4].objectName} ${objName} = new ${mockMethInfo.javaGenericModel.objectModelList[4].objectName}();
-            <#list mockMethInfo.javaGenericModel.objectModelList[4].objectParameterList as cParameter>
-            <#--设置内部值-->
+                <#if (mockMethInfo.javaGenericModel.objectModelList[4].objectParameterList)??>
+                    <#list mockMethInfo.javaGenericModel.objectModelList[4].objectParameterList as cParameter>
+                    <#--设置内部值-->
             ${objName}.set${cParameter.upName}(<#if cParameter.value??>${cParameter.value}<#else >new ${cParameter.type}()</#if>);
-            </#list>
+                    </#list>
+                </#if>
 
             map.put(${mockMethInfo.javaGenericModel.objectModelList[3].defaultValue}, ${objName});
             list.add(map);
@@ -102,10 +107,12 @@ public class ${javaClassDTO.modelNameUpperCamelMockClass}  {
             List<${mockMethInfo.javaGenericModel.objectModelList[2].objectName}> list = new ArrayList<>(1);
             <#assign objName ="${mockMethInfo.javaGenericModel.objectModelList[2].objectName?uncap_first}">
             ${mockMethInfo.javaGenericModel.objectModelList[2].objectName} ${objName} = new ${mockMethInfo.javaGenericModel.objectModelList[2].objectName}();
-            <#list mockMethInfo.javaGenericModel.objectModelList[2].objectParameterList as cParameter>
-            <#--设置内部值-->
+                <#if (mockMethInfo.javaGenericModel.objectModelList[2].objectParameterList)??>
+                    <#list mockMethInfo.javaGenericModel.objectModelList[2].objectParameterList as cParameter>
+                    <#--设置内部值-->
             ${objName}.set${cParameter.upName}(<#if cParameter.value??>${cParameter.value}<#else >new ${cParameter.type}()</#if>);
-            </#list>
+                    </#list>
+                </#if>
 
             list.add(${objName});
             data.setData(list);
@@ -116,10 +123,12 @@ public class ${javaClassDTO.modelNameUpperCamelMockClass}  {
             Map<${mockMethInfo.javaGenericModel.objectModelList[2].objectName}, ${mockMethInfo.javaGenericModel.objectModelList[3].objectName}> map = new HashMap<>(1);
             <#assign objName ="${mockMethInfo.javaGenericModel.objectModelList[3].objectName?uncap_first}">
             ${mockMethInfo.javaGenericModel.objectModelList[3].objectName} ${objName} = new ${mockMethInfo.javaGenericModel.objectModelList[3].objectName}();
-            <#list mockMethInfo.javaGenericModel.objectModelList[3].objectParameterList as cParameter>
-            <#--设置内部值-->
+                <#if (mockMethInfo.javaGenericModel.objectModelList[3].objectParameterList)??>
+                    <#list mockMethInfo.javaGenericModel.objectModelList[3].objectParameterList as cParameter>
+                    <#--设置内部值-->
             ${objName}.set${cParameter.upName}(<#if cParameter.value??>${cParameter.value}<#else >new ${cParameter.type}()</#if>);
-            </#list>
+                    </#list>
+                </#if>
 
             map.put(${mockMethInfo.javaGenericModel.objectModelList[2].defaultValue}, ${objName});
             data.setData(map);
@@ -133,10 +142,12 @@ public class ${javaClassDTO.modelNameUpperCamelMockClass}  {
                 <#else>
                     <#assign objName ="${mockMethInfo.javaGenericModel.objectModelList[1].objectName?uncap_first}">
             ${mockMethInfo.javaGenericModel.objectModelList[1].objectName} ${objName} = new ${mockMethInfo.javaGenericModel.objectModelList[1].objectName}();
-                    <#list mockMethInfo.javaGenericModel.objectModelList[1].objectParameterList as cParameter>
-                    <#--设置内部值-->
+                    <#if (mockMethInfo.javaGenericModel.objectModelList[1].objectParameterList)??>
+                        <#list mockMethInfo.javaGenericModel.objectModelList[1].objectParameterList as cParameter>
+                        <#--设置内部值-->
             ${objName}.set${cParameter.upName}(<#if cParameter.value??>${cParameter.value}<#else >new ${cParameter.type}()</#if>);
-                    </#list>
+                        </#list>
+                    </#if>
 
             data.setData(${objName});
             return data;
@@ -148,10 +159,13 @@ public class ${javaClassDTO.modelNameUpperCamelMockClass}  {
             Map<${mockMethInfo.javaGenericModel.objectModelList[4].objectName}, ${mockMethInfo.javaGenericModel.objectModelList[5].objectName}> map = new HashMap<>(1);
             <#assign objName ="${mockMethInfo.javaGenericModel.objectModelList[5].objectName?uncap_first}">
             ${mockMethInfo.javaGenericModel.objectModelList[5].objectName} ${objName} = new ${mockMethInfo.javaGenericModel.objectModelList[5].objectName}();
-            <#list mockMethInfo.javaGenericModel.objectModelList[5].objectParameterList as cParameter>
-            <#--设置内部值-->
+                <#if (mockMethInfo.javaGenericModel.objectModelList[5].objectParameterList)??>
+                    <#list mockMethInfo.javaGenericModel.objectModelList[5].objectParameterList as cParameter>
+                    <#--设置内部值-->
             ${objName}.set${cParameter.upName}(<#if cParameter.value??>${cParameter.value}<#else >new ${cParameter.type}()</#if>);
-            </#list>
+                    </#list>
+                </#if>
+
             map.put(${mockMethInfo.javaGenericModel.objectModelList[4].defaultValue}, ${objName});
 
             objectMap.put(${mockMethInfo.javaGenericModel.objectModelList[2].defaultValue}, map);
@@ -162,22 +176,32 @@ public class ${javaClassDTO.modelNameUpperCamelMockClass}  {
             Map<${mockMethInfo.javaGenericModel.objectModelList[2].objectName}, ${mockMethInfo.javaGenericModel.objectModelList[3].objectName}> map = new HashMap<>(1);
                 <#assign objName ="${mockMethInfo.javaGenericModel.objectModelList[3].objectName?uncap_first}">
             ${mockMethInfo.javaGenericModel.objectModelList[3].objectName} ${objName} = new ${mockMethInfo.javaGenericModel.objectModelList[3].objectName}();
-                <#list mockMethInfo.javaGenericModel.objectModelList[3].objectParameterList as cParameter>
-                <#--设置内部值-->
+                <#if (mockMethInfo.javaGenericModel.objectModelList[3].objectParameterList)??>
+                    <#list mockMethInfo.javaGenericModel.objectModelList[3].objectParameterList as cParameter>
+                    <#--设置内部值-->
             ${objName}.set${cParameter.upName}(<#if cParameter.value??>${cParameter.value}<#else >new ${cParameter.type}()</#if>);
-                </#list>
+                    </#list>
+                </#if>
 
             map.put(${mockMethInfo.javaGenericModel.objectModelList[2].defaultValue}, ${objName});
             mapList.add(map);
             return mapList;
+            <#elseif mockMethInfo.genericValue?contains("List") && mockMethInfo.genericValue?contains(">") && mockMethInfo.javaGenericModel.isBaseDataType>
+            <#--List<Integer> dataRO = new ArrayList<>(1);-->
+            <#assign objName ="${mockMethInfo.javaGenericModel.objectModelList[1].objectName?uncap_first}">
+            ${mockMethInfo.javaGenericModel.objectModelList[1].objectName} ${objName} = new ${mockMethInfo.javaGenericModel.objectModelList[1].objectName}(${mockMethInfo.javaGenericModel.objectModelList[1].defaultValue});
+            objList.add(${objName});
+            return objList;
             <#elseif mockMethInfo.genericValue?contains("List") && mockMethInfo.genericValue?contains(">")>
             <#--List<User> dataRO = new ArrayList<>(1);-->
             <#assign objName ="${mockMethInfo.javaGenericModel.objectModelList[1].objectName?uncap_first}">
             ${mockMethInfo.javaGenericModel.objectModelList[1].objectName} ${objName} = new ${mockMethInfo.javaGenericModel.objectModelList[1].objectName}();
-            <#list mockMethInfo.javaGenericModel.objectModelList[1].objectParameterList as cParameter>
-            <#--设置内部值-->
+                <#if (mockMethInfo.javaGenericModel.objectModelList[1].objectParameterList)??>
+                    <#list mockMethInfo.javaGenericModel.objectModelList[1].objectParameterList as cParameter>
+                    <#--设置内部值-->
             ${objName}.set${cParameter.upName}(<#if cParameter.value??>${cParameter.value}<#else >new ${cParameter.type}()</#if>);
-            </#list>
+                    </#list>
+                </#if>
 
             objList.add(${objName});
             return objList;
@@ -185,20 +209,24 @@ public class ${javaClassDTO.modelNameUpperCamelMockClass}  {
             <#--Map<Integer,User> dataRO = new HashMap<>(1);-->
             <#assign objName ="${mockMethInfo.javaGenericModel.objectModelList[2].objectName?uncap_first}">
             ${mockMethInfo.javaGenericModel.objectModelList[2].objectName} ${objName} = new ${mockMethInfo.javaGenericModel.objectModelList[2].objectName}();
-            <#list mockMethInfo.javaGenericModel.objectModelList[2].objectParameterList as cParameter>
-            <#--设置内部值-->
+                <#if (mockMethInfo.javaGenericModel.objectModelList[2].objectParameterList)??>
+                    <#list mockMethInfo.javaGenericModel.objectModelList[2].objectParameterList as cParameter>
+                    <#--设置内部值-->
             ${objName}.set${cParameter.upName}(<#if cParameter.value??>${cParameter.value}<#else >new ${cParameter.type}()</#if>);
-            </#list>
+                    </#list>
+                </#if>
 
             mapObj.put(${mockMethInfo.javaGenericModel.objectModelList[1].defaultValue}, ${objName});
             return mapObj;
             <#elseif mockMethInfo.javaGenericModel.isCustomClass>
             <#--User user = new User();-->
             <#assign objName ="${mockMethInfo.javaGenericModel.objectModelList[0].objectName?uncap_first}">
-            <#list mockMethInfo.javaGenericModel.objectModelList[0].objectParameterList as cParameter>
-            <#--设置内部值-->
+                <#if (mockMethInfo.javaGenericModel.objectModelList[0].objectParameterList)??>
+                    <#list mockMethInfo.javaGenericModel.objectModelList[0].objectParameterList as cParameter>
+                    <#--设置内部值-->
             ${objName}.set${cParameter.upName}(<#if cParameter.value??>${cParameter.value}<#else >new ${cParameter.type}()</#if>);
-            </#list>
+                    </#list>
+                </#if>
             return ${objName};
             <#else>
             // 其他Mock情况需自行实现

@@ -64,8 +64,10 @@ public class GenJava {
      * 开始生成测试类入口
      *
      * @param javaClassInfo 参数
+     * @param startTime
      */
     public static void genTest(JavaClassInfo javaClassInfo) {
+        long startTime = System.currentTimeMillis();
         try {
             //设置配置文件 freemarker
             Configuration cfg = getConfiguration();
@@ -142,8 +144,10 @@ public class GenJava {
                 }*/
                 //log.info(testFile + ", 追加方法成功，生成的临时文件:" + newFile);
             }
+
+            log.info("成功生成测试Case+Mock代码！类名："+javaClassInfo.getTypeName()+" 耗时："+ ((System.currentTimeMillis()-startTime)/1000D) +"秒");
         } catch (Exception e) {
-            log.error("生成失败，出现异常", e);
+            log.error("生成测试Case+Mock代码失败！类名："+javaClassInfo.getTypeName()+" 耗时："+ ((System.currentTimeMillis()-startTime)/1000D) +"秒！异常：", e);
         }
     }
 

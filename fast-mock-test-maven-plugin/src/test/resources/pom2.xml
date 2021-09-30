@@ -25,7 +25,7 @@
             <plugin>
                 <groupId>io.github.techthird</groupId>
                 <artifactId>fast-mock-maven-plugin</artifactId>
-                <version>1.0.4-SNAPSHOT</version>
+                <version>1.0.5</version>
                 <configuration>
                     <testPackageName>fast.mock.test.maven.plugin.service.impl.ItemServiceImpl.java</testPackageName>
                     <isDebug>false</isDebug>

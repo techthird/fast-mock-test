@@ -121,6 +121,7 @@ public class FullNameHandle {
                     if (InitConstant.EXCLUDE_IMPORT_TYPE.contains(type)) {
                         continue;
                     }
+                    type = type.contains("[]")?type.replaceAll("\\[]", "") : type;
                     javaImplementsDTO.setType(type);
                     javaImplementsDTOList.add(javaImplementsDTO);
                 }

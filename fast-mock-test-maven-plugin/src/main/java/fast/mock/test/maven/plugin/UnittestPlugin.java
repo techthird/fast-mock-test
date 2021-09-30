@@ -208,6 +208,7 @@ public class UnittestPlugin extends AbstractPlugin {
 
             }
 
+            int count = 0;
             //遍历javaListMap，需要生成测试类的包
             for (String packageName : javaListMap.keySet()) {
                 //设置当前进行生成类的测试包名
@@ -215,6 +216,7 @@ public class UnittestPlugin extends AbstractPlugin {
                 log.info("当前遍历的包名为：" + packageName );
                 //class文件绝对路径
                 for (String javaNamePath : javaList) {
+                    count ++;
                     log.info("当前java文件的绝对路径为：" + javaNamePath);
                     if (javaNamePath.endsWith("$1")) {
                         //跳过
@@ -249,8 +251,10 @@ public class UnittestPlugin extends AbstractPlugin {
                     GenJava.genTest(javaClassInfo);
                 }
             }
-            double timeout = (System.currentTimeMillis()-startTime)/1000D;
-            log.info("成功生成自动化测试Case+Mock代码！耗时："+ timeout +"秒");
+
+            if (count > 1) {
+                log.info("生成全部测试Case+Mock代码，总耗时："+ ((System.currentTimeMillis()-startTime)/1000D) +"秒");
+            }
         } finally {
             //最终的一些操作
             DownFile.removeTemplateFile();
@@ -305,14 +309,14 @@ public class UnittestPlugin extends AbstractPlugin {
             log.info("加载当前模块的类：" + mainJava);
             CommonConstant.javaProjectBuilder.addSourceTree(new File(mainJava));
         } catch (Exception e) {
-            log.error("读取包下所有的java类文件 异常" + e.getMessage());
+            log.error("读取包下所有的java类文件 异常", e);
         }
         try {
             String testJava = basedir.getPath() + CommonConstant.JAVA_TEST_SRC;
             log.info("加载当前模块的测试类：" + testJava);
             CommonConstant.javaProjectBuilder.addSourceTree(new File(testJava));
         } catch (Exception e) {
-            log.error("读取包下所有的测试的java类文件 异常" + e.getMessage());
+            log.error("读取包下所有的测试的java类文件 异常", e);
         }
         try {
             ClassLoader cl = ClassLoader.getSystemClassLoader();
@@ -328,7 +332,7 @@ public class UnittestPlugin extends AbstractPlugin {
         }
     }
 
-    private URL[] getPackageUrls() throws MojoExecutionException {
+    private URL[]   getPackageUrls() throws MojoExecutionException {
         List<URL> runtimeUrls = new ArrayList<>();
         try
         {

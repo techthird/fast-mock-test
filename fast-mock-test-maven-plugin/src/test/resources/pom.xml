@@ -25,7 +25,7 @@
             <plugin>
                 <groupId>io.github.techthird</groupId>
                 <artifactId>fast-mock-maven-plugin</artifactId>
-                <version>1.0.4-SNAPSHOT</version>
+                <version>1.0.5</version>
                 <configuration>
                     <target>D:/Workspaces/YunjiProjects/Other/fast-mock-test/fast-mock-test-demo/target</target>
                     <basedir>D:/Workspaces/YunjiProjects/Other/fast-mock-test/fast-mock-test-demo</basedir>

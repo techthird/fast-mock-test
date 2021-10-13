@@ -44,7 +44,7 @@ PS：团队前期没有单测的沉淀，可以先从整个接口的集成测试
  ```
 <plugins>
     <plugin>
-        <groupId>fast-mock-test</groupId>
+        <groupId>io.github.techthird</groupId>
         <artifactId>fast-mock-maven-plugin</artifactId>
         <version>1.0.5</version>
         <configuration>
